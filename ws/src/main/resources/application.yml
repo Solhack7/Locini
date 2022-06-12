@@ -1,0 +1,40 @@
+# SECRET CODE OF JWT
+jwt:
+     SSS: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+
+server:
+  port: 8083
+
+spring:
+  datasource:
+    #Data source config
+    # Datasource URL
+    url: jdbc:mysql://localhost:3306/sss
+    # Datasource User
+    username: root
+    # Datasource password
+    password:
+  # OAUTH2 CRED
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: "899007720285-cu474ct3bmr919ffqdnajj710a9s0urc.apps.googleusercontent.com"
+            clientSecret: "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"
+            scope:
+              - email
+              - profile
+
+  jpa:
+    # JPA Show SQL
+    show-sql: true
+    # JPA Hibernate AUTO DDL (for changes on entities to be automatically made in DB)
+    hibernate:
+       ddl-auto: update
+
+    properties:
+      # JPA DB Platform
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
