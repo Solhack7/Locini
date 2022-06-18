@@ -4,6 +4,7 @@ import com.springsecurity.ws.Exception.*;
 import com.springsecurity.ws.Response.GetVehiculeResponse;
 import com.springsecurity.ws.Service.VehiculeService;
 import com.springsecurity.ws.UserRequest.VehiculeRequest;
+import com.springsecurity.ws.Utility.Dto.PartnaireDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import netscape.security.Principal;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 
 
 @Slf4j
@@ -40,5 +42,11 @@ public class VehiculeControllers {
             throw new VehiculeException("Vous Avez Raté Un Champs Obligatoire");
         HashMap<String,Object> addOffer = vehiculeService.updateVehicule(vehiculeRequest,idb_vehicule);
         return new ResponseEntity<HashMap<String,Object>>(addOffer, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getByCategory", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<HashMap<String,Object>> getAllPartner(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "90") int limit,@RequestParam(value = "idbCategory") String idbCategory){
+        HashMap<String,Object> payload = vehiculeService.getByCategory(page,limit,idbCategory);
+        return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
     }
 }

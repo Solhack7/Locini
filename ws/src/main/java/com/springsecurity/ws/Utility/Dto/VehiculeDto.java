@@ -1,14 +1,11 @@
 package com.springsecurity.ws.Utility.Dto;
 
-import com.springsecurity.ws.Entity.VehiculeImageEntity;
+import com.springsecurity.ws.Entity.CategoryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -19,4 +16,5 @@ public class VehiculeDto implements Serializable {
     private String nomVehicule;
     private String browserId;
     private long place;
+    private CategoryDto categoryVehicule;
 }

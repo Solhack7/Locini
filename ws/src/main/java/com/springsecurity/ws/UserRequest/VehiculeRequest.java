@@ -19,4 +19,5 @@ public class VehiculeRequest {
     private Set<String> imgsId;
     private String altImg;
     private String partenaireIdBrowser;
+    private String categoryIdb;
 }

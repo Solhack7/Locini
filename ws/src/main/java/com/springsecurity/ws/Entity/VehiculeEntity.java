@@ -30,4 +30,7 @@ public class VehiculeEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "partnaire_id")
     private PartenaireEntity partenaire;
+    @ManyToOne
+    @JoinColumn(name="category_id")
+    private CategoryEntity categoryVehicule;
 }

@@ -1,6 +1,7 @@
 package com.springsecurity.ws.Response;
 
 import com.springsecurity.ws.Entity.VehiculeImageEntity;
+import com.springsecurity.ws.Utility.Dto.CategoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class VehiculeResponse {
     private String nomVehicule;
     private String browserId;
     private long place;
+    private CategoryDto categoryVehicule;
 }

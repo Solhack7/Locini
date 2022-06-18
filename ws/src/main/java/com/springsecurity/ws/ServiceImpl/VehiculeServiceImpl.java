@@ -1,30 +1,34 @@
 package com.springsecurity.ws.ServiceImpl;
 
-import com.springsecurity.ws.Entity.ImageEntity;
-import com.springsecurity.ws.Entity.PartenaireEntity;
-import com.springsecurity.ws.Entity.VehiculeEntity;
-import com.springsecurity.ws.Entity.VehiculeImageEntity;
+import com.springsecurity.ws.Entity.*;
 import com.springsecurity.ws.Exception.ImageException;
 import com.springsecurity.ws.Exception.PartnaireException;
 import com.springsecurity.ws.Exception.UsernameNotExist;
 import com.springsecurity.ws.Exception.VehiculeException;
+import com.springsecurity.ws.Repository.CategorieRepo;
 import com.springsecurity.ws.Repository.VehiculeImageRepo;
 import com.springsecurity.ws.Repository.VehiculeRepo;
 import com.springsecurity.ws.Service.ImageService;
 import com.springsecurity.ws.Service.PartnaireService;
 import com.springsecurity.ws.Service.VehiculeService;
 import com.springsecurity.ws.UserRequest.VehiculeRequest;
+import com.springsecurity.ws.Utility.Dto.CategoryDto;
 import com.springsecurity.ws.Utility.Dto.VehiculeDto;
 import com.springsecurity.ws.Utility.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -38,10 +42,12 @@ public class VehiculeServiceImpl implements VehiculeService {
     private final ImageService imageService;
     private final VehiculeImageRepo vehiculeImageRepo;
     private final PartnaireService partnaireService;
+    private final CategorieRepo categorieRepo;
     @Override
     public HashMap<String, Object> addVehicule(VehiculeRequest vehiculeRequest) throws ImageException, PartnaireException {
         HashMap<String,Object> hashMap = new HashMap<String,Object>();
         PartenaireEntity partenaireEntity = partnaireService.checkExistPartenaire(vehiculeRequest.getPartenaireIdBrowser());
+        CategoryEntity categoryEntity =categorieRepo.findByIdbCategory(vehiculeRequest.getCategoryIdb());
         if(vehiculeRepo.getNumberOfVehiculeOfPartner(partenaireEntity.getId())<partenaireEntity.getOffer().getNbVehicule()){
             ModelMapper modelMapper = new ModelMapper();
             modelMapper.getConfiguration()
@@ -53,7 +59,9 @@ public class VehiculeServiceImpl implements VehiculeService {
             vehicule.setNomVehicule(vehiculeRequest.getNomVehicule().toLowerCase(Locale.ROOT));
             vehicule.setBrowserId(utils.generateStringId(15));
             vehicule.setPartenaire(partenaireEntity);
+            vehicule.setCategoryVehicule(categoryEntity);
             vehiculeRepo.save(vehicule);
+
             for (String imgId:vehiculeRequest.getImgsId()){
                 ImageEntity image = imageService.checkExixtImg(imgId);
                 VehiculeImageEntity vehiculeImageEntity = new VehiculeImageEntity();
@@ -84,6 +92,29 @@ public class VehiculeServiceImpl implements VehiculeService {
         vehiculeRepo.save(vehiculeEntity);
         hashMap.put("msg","la modification est faite avec succes");
         hashMap.put("vehicule_details",modelMapper.map(vehiculeEntity,VehiculeDto.class));
+        return hashMap;
+    }
+
+    @Override
+    public HashMap<String, Object> getByCategory(int page, int limit,String idbCategory) {
+        CategoryEntity categoryEntity = categorieRepo.findByIdbCategory(idbCategory);
+        HashMap<String , Object> hashMap = new HashMap<>();
+        if (page>0) {
+            page = page -1;
+        }
+        ModelMapper modelmapper = new ModelMapper();
+        modelmapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        Pageable pagaebaleRequest = PageRequest.of(page, limit);
+        Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehicule(pagaebaleRequest,categoryEntity);
+        List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+        List<VehiculeDto> vehiculeDtos = new ArrayList<>();
+        for (VehiculeEntity vehiculeEntity:vehiculeEntityList) {
+            VehiculeDto vehiculeDto = modelmapper.map(vehiculeEntity,VehiculeDto.class);
+            vehiculeDtos.add(vehiculeDto);
+        }
+        hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
+        hashMap.put("payload",vehiculeDtos);
         return hashMap;
     }
 }
