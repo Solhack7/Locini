@@ -47,6 +47,8 @@ public class UsersAccount implements Serializable { // @Data From import lombok.
     private PartenaireEntity partenaire;
     @OneToMany(mappedBy = "usersAccount", cascade = CascadeType.ALL)
     private List<PartenaireEntity> partenaireEntities;
+    @OneToMany(mappedBy = "usersAccount", cascade = CascadeType.ALL)
+    private List<OffersEntity> offersEntities;
 public UsersAccount(){
 
 }
@@ -64,7 +66,6 @@ public UsersAccount(){
         this.authorities = authorities;
         this.isActive = isActive;
         this.isNotLocked = isNotLocked;
-
     }
 
 }

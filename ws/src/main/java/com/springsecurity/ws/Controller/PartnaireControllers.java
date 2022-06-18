@@ -8,6 +8,7 @@ import com.springsecurity.ws.Exception.VehiculeException;
 import com.springsecurity.ws.Service.PartnaireService;
 import com.springsecurity.ws.UserRequest.PartnaireRequest;
 import com.springsecurity.ws.UserRequest.VehiculeRequest;
+import com.springsecurity.ws.Utility.Dto.PartnaireDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.security.Principal;
@@ -18,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/partner") // localhost:8084/api/vehicules
+@RequestMapping("/partner") // localhost:8084/api/partner
 @RequiredArgsConstructor
 public class PartnaireControllers {
-
     private final PartnaireService partnaireService;
     @PostMapping(path = "/add_partnaire",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
@@ -39,6 +40,12 @@ public class PartnaireControllers {
     public ResponseEntity<HashMap<String,Object>> getEtatMag(@PathVariable String idBrowserPartner){
         HashMap<String,Object> payload = partnaireService.getVehiculePartenaire(idBrowserPartner);
         return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/partnerlist", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<List<PartnaireDto>> getAllPartner(){
+        List<PartnaireDto> payload = partnaireService.getAllPartner();
+        return new ResponseEntity<List<PartnaireDto>>(payload, HttpStatus.OK);
     }
 
 }

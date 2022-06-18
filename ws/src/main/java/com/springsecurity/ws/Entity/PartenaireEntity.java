@@ -41,4 +41,7 @@ public class PartenaireEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private UsersAccount usersAccount;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "offers_id")
+    private OffersEntity offer;
 }

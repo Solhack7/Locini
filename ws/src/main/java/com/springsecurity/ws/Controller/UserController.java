@@ -8,8 +8,11 @@ import com.springsecurity.ws.Repository.*;
 import com.springsecurity.ws.Repository.UsersAccountRepository;
 import com.springsecurity.ws.Service.UserService;
 import com.springsecurity.ws.Utility.*;
+import com.springsecurity.ws.Utility.Dto.UserAccountDto;
 import com.springsecurity.ws.Utility.JWTProvider;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,12 +54,20 @@ public class UserController extends ExceptionProcessing {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsersAccount> login(@RequestBody UsersAccount user) {
+    public ResponseEntity<UserAccountDto> login(@RequestBody UsersAccount user) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
         sssAuth(user.getUsername(), user.getPassword());
         UsersAccount login = userService.findByUsername(user.getUsername());
         UserData userData = new UserData(login);
+        UserAccountDto userAccountDto =  new UserAccountDto();
+        userAccountDto.setUsername(userData.getUsername());
+        userAccountDto.setEmail(login.getEmail());
+        userAccountDto.setFirstName(login.getFirstName());
+        userAccountDto.setLastName(login.getLastName());
         HttpHeaders jwtHeader = getasmyJwtHeader(userData);
-        return new ResponseEntity<>(login, jwtHeader, OK);
+        return new ResponseEntity<>(userAccountDto, jwtHeader, OK);
     }
 
 

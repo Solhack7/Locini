@@ -6,6 +6,8 @@ import com.springsecurity.ws.Entity.VehiculeEntity;
 import com.springsecurity.ws.Entity.VehiculeImageEntity;
 import com.springsecurity.ws.Exception.ImageException;
 import com.springsecurity.ws.Exception.PartnaireException;
+import com.springsecurity.ws.Exception.UsernameNotExist;
+import com.springsecurity.ws.Exception.VehiculeException;
 import com.springsecurity.ws.Repository.VehiculeImageRepo;
 import com.springsecurity.ws.Repository.VehiculeRepo;
 import com.springsecurity.ws.Service.ImageService;
@@ -62,6 +64,20 @@ public class VehiculeServiceImpl implements VehiculeService {
         VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
         hashMap.put("msg","CREATED WITH SUCCES");
         hashMap.put("createdVehicule",vehiculeDto);
+        return hashMap;
+    }
+
+    @Override
+    public HashMap<String, Object> updateVehicule(VehiculeRequest vehiculeRequest,String idb_vehicule) throws VehiculeException {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        ModelMapper modelMapper = new ModelMapper();
+        VehiculeEntity vehiculeEntity = vehiculeRepo.findByBrowserId(idb_vehicule);
+        if(vehiculeEntity==null)throw new VehiculeException("Cette Vehicule Exixt Pas");
+        vehiculeEntity.setNomVehicule(vehiculeRequest.getNomVehicule());
+        vehiculeEntity.setPlace(vehiculeRequest.getPlace());
+        vehiculeRepo.save(vehiculeEntity);
+        hashMap.put("msg","la modification est faite avec succes");
+        hashMap.put("vehicule_details",modelMapper.map(vehiculeEntity,VehiculeDto.class));
         return hashMap;
     }
 }

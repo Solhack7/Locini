@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface VehiculeRepo extends PagingAndSortingRepository< VehiculeEntity,Long> {
     List<VehiculeEntity> findByPartenaire(PartenaireEntity partenaire);
+    VehiculeEntity findByBrowserId(String idb);
 }
