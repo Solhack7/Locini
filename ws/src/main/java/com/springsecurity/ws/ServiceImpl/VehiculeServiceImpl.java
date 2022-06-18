@@ -40,30 +40,36 @@ public class VehiculeServiceImpl implements VehiculeService {
     private final PartnaireService partnaireService;
     @Override
     public HashMap<String, Object> addVehicule(VehiculeRequest vehiculeRequest) throws ImageException, PartnaireException {
-        PartenaireEntity partenaireEntity = partnaireService.checkExistPartenaire(vehiculeRequest.getPartenaireIdBrowser());
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
         HashMap<String,Object> hashMap = new HashMap<String,Object>();
-        for (String imgIdCheck : vehiculeRequest.getImgsId()){
-            ImageEntity image = imageService.checkExixtImg(imgIdCheck);
+        PartenaireEntity partenaireEntity = partnaireService.checkExistPartenaire(vehiculeRequest.getPartenaireIdBrowser());
+        if(vehiculeRepo.getNumberOfVehiculeOfPartner(partenaireEntity.getId())<partenaireEntity.getOffer().getNbVehicule()){
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.getConfiguration()
+                    .setMatchingStrategy(MatchingStrategies.STRICT);
+            for (String imgIdCheck : vehiculeRequest.getImgsId()){
+                ImageEntity image = imageService.checkExixtImg(imgIdCheck);
+            }
+            VehiculeEntity vehicule = modelMapper.map(vehiculeRequest,VehiculeEntity.class);
+            vehicule.setNomVehicule(vehiculeRequest.getNomVehicule().toLowerCase(Locale.ROOT));
+            vehicule.setBrowserId(utils.generateStringId(15));
+            vehicule.setPartenaire(partenaireEntity);
+            vehiculeRepo.save(vehicule);
+            for (String imgId:vehiculeRequest.getImgsId()){
+                ImageEntity image = imageService.checkExixtImg(imgId);
+                VehiculeImageEntity vehiculeImageEntity = new VehiculeImageEntity();
+                vehiculeImageEntity.setVehicule(vehicule);
+                vehiculeImageEntity.setImage(image);
+                vehiculeImageEntity.setAltImg(vehicule.getNomVehicule()+"_"+vehiculeRequest.getAltImg());
+                vehiculeImageRepo.save(vehiculeImageEntity);
+            }
+            VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+            hashMap.put("msg","CREATED WITH SUCCES");
+            hashMap.put("createdVehicule",vehiculeDto);
         }
-        VehiculeEntity vehicule = modelMapper.map(vehiculeRequest,VehiculeEntity.class);
-        vehicule.setNomVehicule(vehiculeRequest.getNomVehicule().toLowerCase(Locale.ROOT));
-        vehicule.setBrowserId(utils.generateStringId(15));
-        vehicule.setPartenaire(partenaireEntity);
-        vehiculeRepo.save(vehicule);
-        for (String imgId:vehiculeRequest.getImgsId()){
-            ImageEntity image = imageService.checkExixtImg(imgId);
-            VehiculeImageEntity vehiculeImageEntity = new VehiculeImageEntity();
-            vehiculeImageEntity.setVehicule(vehicule);
-            vehiculeImageEntity.setImage(image);
-            vehiculeImageEntity.setAltImg(vehicule.getNomVehicule()+"_"+vehiculeRequest.getAltImg());
-            vehiculeImageRepo.save(vehiculeImageEntity);
+        else{
+            hashMap.put("msg","Vous Devez upgrader votre offre");
+
         }
-        VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-        hashMap.put("msg","CREATED WITH SUCCES");
-        hashMap.put("createdVehicule",vehiculeDto);
         return hashMap;
     }
 

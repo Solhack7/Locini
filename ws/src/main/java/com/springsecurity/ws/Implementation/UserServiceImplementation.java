@@ -90,7 +90,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     public UsersAccount register(String firstName, String lastName, String username, String email, String password)
             throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, PasswordValidException {
         isvalidUsernameAndEmail(EMPTY, username, email);
-
         isValid( password);
         UsersAccount user = new UsersAccount();
         user.setUserId(generateUserId());
@@ -98,10 +97,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         user.setLastName(lastName);
         user.setUsername(username);
         user.setEmail(email);
-
-
         user.setPassword(encodePassword(password));
-
         user.setActive(true);
         user.setNotLocked(true);
         user.setRole(ROLE_SUPER_ADMIN.name());//ROLE_SUPER_ADMIN
