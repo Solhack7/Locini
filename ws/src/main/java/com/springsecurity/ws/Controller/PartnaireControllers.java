@@ -44,11 +44,11 @@ public class PartnaireControllers {
         List<PartnaireDto> payload = partnaireService.getAllPartner();
         return new ResponseEntity<List<PartnaireDto>>(payload, HttpStatus.OK);
     }
+
     @PutMapping(path = "/update_partner/{idb_partnaire}",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HashMap<String,Object>> addOffersToPartner(@RequestBody @Valid PartnaireRequest partnaireRequest, @PathVariable String idb_partnaire) throws PartnaireException, OffersException, UsernameNotExist, VehiculeException {
-        if (partnaireRequest.getNom_agence().isEmpty() || partnaireRequest.getAdresse_agence().isEmpty() || partnaireRequest.getEmail().isEmpty() || partnaireRequest.getVille().isEmpty() || partnaireRequest.getTelephone().isEmpty())
-            throw new PartnaireException("Vous Avez Raté Un Champs Obligatoire");
+        if (partnaireRequest.getNom_agence().isEmpty() || partnaireRequest.getAdresse_agence().isEmpty() || partnaireRequest.getEmail().isEmpty() || partnaireRequest.getVille().isEmpty() || partnaireRequest.getTelephone().isEmpty()) throw new PartnaireException("Vous Avez Raté Un Champs Obligatoire");
         HashMap<String,Object> updatePartnaire = partnaireService.updatePartnaire(partnaireRequest,idb_partnaire);
         return new ResponseEntity<HashMap<String,Object>>(updatePartnaire, HttpStatus.OK);
     }

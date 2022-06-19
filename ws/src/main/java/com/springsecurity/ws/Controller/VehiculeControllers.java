@@ -25,8 +25,6 @@ import java.util.List;
 public class VehiculeControllers {
 
     private final VehiculeService vehiculeService;
-
-
     @PostMapping(path = "/add_vehicule",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HashMap<String,Object>> createVehicule(@RequestBody @Valid VehiculeRequest vehiculeRequest , Principal authentication) throws VehiculeException, ImageException, PartnaireException {
@@ -45,8 +43,13 @@ public class VehiculeControllers {
     }
 
     @GetMapping(path = "/getByCategory", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<HashMap<String,Object>> getAllPartner(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "90") int limit,@RequestParam(value = "idbCategory") String idbCategory){
+    public ResponseEntity<HashMap<String,Object>> getVehiculeByCategory(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "90") int limit,@RequestParam(value = "idbCategory") String idbCategory){
         HashMap<String,Object> payload = vehiculeService.getByCategory(page,limit,idbCategory);
+        return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
+    }
+    @GetMapping(path = "/getByLowPrice", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<HashMap<String,Object>> getByLowPrice(){
+        HashMap<String,Object> payload = vehiculeService.getByLowPrice();
         return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
     }
 }

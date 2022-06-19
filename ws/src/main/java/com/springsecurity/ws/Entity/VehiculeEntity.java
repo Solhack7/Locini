@@ -25,6 +25,10 @@ public class VehiculeEntity {
     private long place;
     @Column(nullable = false)
     private Date dt_creation;
+
+    @Column(nullable = false)
+    private float pn;
+
     @OneToMany(mappedBy = "image", cascade = CascadeType.ALL)
     private Set<VehiculeImageEntity> vehiculeImageEntitySet;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

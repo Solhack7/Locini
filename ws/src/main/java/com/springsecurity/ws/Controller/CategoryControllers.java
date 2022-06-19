@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryControllers {
 
-
     private final CategorieService categorieService;
     @PostMapping(path = "/add_categorie")
     public ResponseEntity<CategoryResponse> createArticle(@RequestBody @Valid CategoryRequest categoryRequest , Principal authentication) throws CategoryException {
@@ -47,17 +46,18 @@ public class CategoryControllers {
         return new ResponseEntity<List<CategoryResponse>>(allCategorie,HttpStatus.OK);
     }
 
-
     @PutMapping(path = "/update_categories/{categorieId}")
     public ResponseEntity<CategoryResponse> updateCategory(@RequestBody @Valid CategoryRequest categoryRequest , @PathVariable String categorieId) {
         ModelMapper modelMapper = new ModelMapper();
-        CategoryDto categoryDto = categorieService.updateCategory(categorieId,categoryRequest);
+        CategoryDto categoryDto = categorieService.updateCategory(categorieId, categoryRequest);
         CategoryResponse categoryResponse = modelMapper.map(categoryDto, CategoryResponse.class);
         return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.ACCEPTED);
     }
+
     @DeleteMapping(path = "/delete_category/{clientId}")
     public ResponseEntity<Object> deleteCategory(@PathVariable String clientId) {
         categorieService.deletedArticle(clientId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

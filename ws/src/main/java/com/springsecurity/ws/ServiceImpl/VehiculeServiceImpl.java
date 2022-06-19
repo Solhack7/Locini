@@ -9,11 +9,14 @@ import com.springsecurity.ws.Repository.CategorieRepo;
 import com.springsecurity.ws.Repository.VehiculeImageRepo;
 import com.springsecurity.ws.Repository.VehiculeRepo;
 import com.springsecurity.ws.Service.ImageService;
+import com.springsecurity.ws.Service.OffersService;
 import com.springsecurity.ws.Service.PartnaireService;
 import com.springsecurity.ws.Service.VehiculeService;
 import com.springsecurity.ws.UserRequest.VehiculeRequest;
 import com.springsecurity.ws.Utility.Dto.CategoryDto;
+import com.springsecurity.ws.Utility.Dto.PartnaireVehiculeDisplayDto;
 import com.springsecurity.ws.Utility.Dto.VehiculeDto;
+import com.springsecurity.ws.Utility.Dto.VehiculeImageDto;
 import com.springsecurity.ws.Utility.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
@@ -43,6 +47,7 @@ public class VehiculeServiceImpl implements VehiculeService {
     private final VehiculeImageRepo vehiculeImageRepo;
     private final PartnaireService partnaireService;
     private final CategorieRepo categorieRepo;
+    private final OffersService offersService;
     @Override
     public HashMap<String, Object> addVehicule(VehiculeRequest vehiculeRequest) throws ImageException, PartnaireException {
         HashMap<String,Object> hashMap = new HashMap<String,Object>();
@@ -75,8 +80,9 @@ public class VehiculeServiceImpl implements VehiculeService {
             hashMap.put("createdVehicule",vehiculeDto);
         }
         else{
-            hashMap.put("msg","Vous Devez upgrader votre offre");
 
+            hashMap.put("msg","Vous Devez upgrader votre offre");
+            hashMap.put("list_offers",partnaireService.getAllOffer());
         }
         return hashMap;
     }
@@ -115,6 +121,35 @@ public class VehiculeServiceImpl implements VehiculeService {
         }
         hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
         hashMap.put("payload",vehiculeDtos);
+        return hashMap;
+    }
+
+    @Override
+    public HashMap<String, Object> getByLowPrice() {
+        HashMap<String , Object> hashMap = new HashMap<>();
+        ModelMapper modelMapper = new ModelMapper();
+        ModelMapper modelmapper = new ModelMapper();
+        modelmapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        Pageable pagaebaleRequest = PageRequest.of(0,2, Sort.by("pn").ascending());
+        Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findAll(pagaebaleRequest);
+        List<VehiculeEntity> vehiculeEntityList = vehiculeEntityPage.getContent();
+        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+        for (VehiculeEntity vehicule:vehiculeEntityList){
+            VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                vehiculeImageDtos.add(vehiculeImageDto);
+            }
+            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+        }
+        hashMap.put("msg","request has been proccesed succes");
+        hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
     }
 }

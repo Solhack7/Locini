@@ -16,6 +16,5 @@ public interface VehiculeRepo extends PagingAndSortingRepository< VehiculeEntity
     VehiculeEntity findByBrowserId(String idb);
     @Query(value = "SELECT count(*) FROM vehicule vc WHERE vc.partnaire_id=:id_partnaire",nativeQuery = true)
     long getNumberOfVehiculeOfPartner(@Param("id_partnaire") long id_partnaire);
-
     Page<VehiculeEntity> findByCategoryVehicule(Pageable pageable, CategoryEntity categoryEntity);
 }

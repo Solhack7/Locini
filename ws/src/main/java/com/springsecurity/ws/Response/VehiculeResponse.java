@@ -16,5 +16,6 @@ public class VehiculeResponse {
     private String nomVehicule;
     private String browserId;
     private long place;
+    private float pn;
     private CategoryDto categoryVehicule;
 }

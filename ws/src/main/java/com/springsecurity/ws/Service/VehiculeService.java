@@ -13,4 +13,6 @@ public interface VehiculeService {
     HashMap<String, Object> updateVehicule(VehiculeRequest vehiculeRequest, String idb_vehicule) throws VehiculeException;
 
     HashMap<String, Object> getByCategory(int page, int limit,String idbCategory);
+
+    HashMap<String, Object> getByLowPrice();
 }

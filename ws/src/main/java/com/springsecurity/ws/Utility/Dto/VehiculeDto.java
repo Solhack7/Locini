@@ -16,5 +16,6 @@ public class VehiculeDto implements Serializable {
     private String nomVehicule;
     private String browserId;
     private long place;
+    private float pn;
     private CategoryDto categoryVehicule;
 }

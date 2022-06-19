@@ -47,7 +47,6 @@ public class GoogleControllers {
                 oauth2AuthenticationUrls.put(registration.getClientName(),
                         authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
         model.addAttribute("urls", oauth2AuthenticationUrls);
-
         return "oauth_login";
     }
 
