@@ -114,13 +114,22 @@ public class VehiculeServiceImpl implements VehiculeService {
         Pageable pagaebaleRequest = PageRequest.of(page, limit);
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehicule(pagaebaleRequest,categoryEntity);
         List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-        List<VehiculeDto> vehiculeDtos = new ArrayList<>();
-        for (VehiculeEntity vehiculeEntity:vehiculeEntityList) {
-            VehiculeDto vehiculeDto = modelmapper.map(vehiculeEntity,VehiculeDto.class);
-            vehiculeDtos.add(vehiculeDto);
+        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+        for (VehiculeEntity vehicule:vehiculeEntityList){
+            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
+            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                vehiculeImageDtos.add(vehiculeImageDto);
+            }
+            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
         }
         hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
-        hashMap.put("payload",vehiculeDtos);
+        hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
     }
 
