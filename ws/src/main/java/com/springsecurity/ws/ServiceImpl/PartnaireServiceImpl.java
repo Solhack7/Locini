@@ -149,4 +149,22 @@ public class PartnaireServiceImpl implements PartnaireService {
         }
         return offersDtos;
     }
+
+    @Override
+    public HashMap<String, Object> updatePartnaire(PartnaireRequest partnaireRequest, String idb_partnaire) throws PartnaireException {
+        HashMap<String,Object> hashMap = new HashMap<>();
+        PartenaireEntity partenaire = partenaireRepo.findByBrowserId(idb_partnaire);
+        if(partenaire==null) throw new PartnaireException("ce partenaire exixt pas");
+        ModelMapper modelMapper= new ModelMapper();
+        partenaire.setNom_agence(partnaireRequest.getNom_agence());
+        partenaire.setEmail(partnaireRequest.getEmail());
+        partenaire.setAdresse_agence(partnaireRequest.getAdresse_agence());
+        partenaire.setTelephone(partnaireRequest.getTelephone());
+        partenaire.setSite_web(partnaireRequest.getSite_web());
+        partenaire.setVille(partenaire.getVille());
+        partenaireRepo.save(partenaire);
+        hashMap.put("msg","la modification est faite avec succes");
+        hashMap.put("payload",modelMapper.map(partenaire,PartnaireDto.class));
+        return hashMap;
+    }
 }

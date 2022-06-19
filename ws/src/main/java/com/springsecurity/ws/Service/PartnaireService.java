@@ -27,4 +27,6 @@ public interface PartnaireService {
     List<PartnaireDto> getAllPartner();
 
     List<OffersDto> getAllOffer();
+
+    HashMap<String, Object> updatePartnaire(PartnaireRequest partnaireRequest, String idb_partnaire) throws PartnaireException;
 }
