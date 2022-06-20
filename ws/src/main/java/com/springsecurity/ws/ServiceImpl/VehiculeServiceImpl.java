@@ -211,4 +211,35 @@ public class VehiculeServiceImpl implements VehiculeService {
         hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
     }
+
+    @Override
+    public HashMap<String, Object> getVehiculeByCBetweenPminAndPmax(String idb_category, int page, int limit, float pnmin, float pnmax) {
+        if (page>0) {
+            page = page -1;
+        }
+        CategoryEntity categoryEntity = categorieRepo.findByIdbCategory(idb_category);
+        HashMap<String , Object> hashMap = new HashMap<>();
+        ModelMapper modelmapper = new ModelMapper();
+        Pageable pagaebaleRequest = PageRequest.of(page, limit, Sort.by("pn").ascending());
+        Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryAndPricingBetweenPminAndPmax(pagaebaleRequest,pnmin,pnmax,categoryEntity.getId());
+        List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+        for (VehiculeEntity vehicule:vehiculeEntityList){
+            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
+            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                vehiculeImageDtos.add(vehiculeImageDto);
+            }
+            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+        }
+        hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
+        hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        return hashMap;
+
+    }
 }

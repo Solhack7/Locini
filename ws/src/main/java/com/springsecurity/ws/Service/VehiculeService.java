@@ -18,4 +18,6 @@ public interface VehiculeService {
 
     HashMap<String, Object> getVehicleAndSimiliarVehiculeByIdbVehicule(String idb_vehicule) throws VehiculeException;
     HashMap<String, Object> getSimilarVehiculeExceptionDetails(String idb_vehicule,String idb_category);
+
+    HashMap<String, Object> getVehiculeByCBetweenPminAndPmax(String idb_category, int page, int limit, float pnmin, float pnmax);
 }

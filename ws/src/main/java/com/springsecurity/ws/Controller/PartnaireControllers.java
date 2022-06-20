@@ -34,7 +34,7 @@ public class PartnaireControllers {
     }
 
     @GetMapping(path = "/{idBrowserPartner}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<HashMap<String,Object>> getEtatMag(@PathVariable String idBrowserPartner){
+    public ResponseEntity<HashMap<String,Object>> getVehiculeByPartenaire(@PathVariable String idBrowserPartner){
         HashMap<String,Object> payload = partnaireService.getVehiculePartenaire(idBrowserPartner);
         return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
     }
@@ -44,7 +44,6 @@ public class PartnaireControllers {
         List<PartnaireDto> payload = partnaireService.getAllPartner();
         return new ResponseEntity<List<PartnaireDto>>(payload, HttpStatus.OK);
     }
-
     @PutMapping(path = "/update_partner/{idb_partnaire}",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HashMap<String,Object>> addOffersToPartner(@RequestBody @Valid PartnaireRequest partnaireRequest, @PathVariable String idb_partnaire) throws PartnaireException, OffersException, UsernameNotExist, VehiculeException {

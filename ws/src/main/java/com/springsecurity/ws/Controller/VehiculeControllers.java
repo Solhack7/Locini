@@ -54,8 +54,16 @@ public class VehiculeControllers {
     }
 
     @GetMapping(path = "/get_vehiculeb/{idb_vehicule}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<HashMap<String,Object>> get(@PathVariable String idb_vehicule) throws VehiculeException {
+    public ResponseEntity<HashMap<String,Object>> getVehiculeAndSimilarVehicule(@PathVariable String idb_vehicule) throws VehiculeException {
         HashMap<String,Object> payload = vehiculeService.getVehicleAndSimiliarVehiculeByIdbVehicule(idb_vehicule);
         return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/get_vehicule/{idb_category}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<HashMap<String,Object>> getVehiculeSameCategoryAndPriceBetween(@PathVariable String idb_category,@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "24") int limit,@RequestParam(value = "pnmin") float pnmin, @RequestParam(value = "pnmax") float pnmax) throws VehiculeException {
+        HashMap<String,Object> payload = vehiculeService.getVehiculeByCBetweenPminAndPmax(idb_category,page,limit,pnmin,pnmax);
+        return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
+    }
+
+
 }
