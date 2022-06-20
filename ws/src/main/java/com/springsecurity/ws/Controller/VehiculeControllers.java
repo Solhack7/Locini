@@ -52,4 +52,10 @@ public class VehiculeControllers {
         HashMap<String,Object> payload = vehiculeService.getByLowPrice();
         return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/get_vehiculeb/{idb_vehicule}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<HashMap<String,Object>> get(@PathVariable String idb_vehicule) throws VehiculeException {
+        HashMap<String,Object> payload = vehiculeService.getVehicleAndSimiliarVehiculeByIdbVehicule(idb_vehicule);
+        return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
+    }
 }

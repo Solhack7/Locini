@@ -15,4 +15,7 @@ public interface VehiculeService {
     HashMap<String, Object> getByCategory(int page, int limit,String idbCategory);
 
     HashMap<String, Object> getByLowPrice();
+
+    HashMap<String, Object> getVehicleAndSimiliarVehiculeByIdbVehicule(String idb_vehicule) throws VehiculeException;
+    HashMap<String, Object> getSimilarVehiculeExceptionDetails(String idb_vehicule,String idb_category);
 }

@@ -161,4 +161,54 @@ public class VehiculeServiceImpl implements VehiculeService {
         hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
     }
+
+    @Override
+    public HashMap<String, Object> getVehicleAndSimiliarVehiculeByIdbVehicule(String idb_vehicule) throws VehiculeException {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        ModelMapper modelMapper = new ModelMapper();
+        VehiculeEntity vehiculeEntity = vehiculeRepo.findByBrowserId(idb_vehicule);
+        if(vehiculeEntity==null)throw new VehiculeException("Cette Vehicule Exixt Pas");
+        List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehiculeEntity);
+        PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+        List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+        for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+            VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+            vehiculeImageDtos.add(vehiculeImageDto);
+        }
+        partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+        partnaireVehiculeDisplayDto.setVehicule(modelMapper.map(vehiculeEntity,VehiculeDto.class));
+        hashMap.put("main_vehicule",partnaireVehiculeDisplayDto);
+        hashMap.put("similar_vehicule",getSimilarVehiculeExceptionDetails(vehiculeEntity.getBrowserId(),vehiculeEntity.getCategoryVehicule().getIdbCategory()));
+        return hashMap;
+    }
+
+    @Override
+    public HashMap<String, Object> getSimilarVehiculeExceptionDetails(String idb_vehicule, String idb_category) {
+        CategoryEntity categoryEntity = categorieRepo.findByIdbCategory(idb_category);
+        HashMap<String , Object> hashMap = new HashMap<>();
+        ModelMapper modelmapper = new ModelMapper();
+        VehiculeEntity vehiculeEntity = vehiculeRepo.findByBrowserId(idb_vehicule);
+        modelmapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        Pageable pagaebaleRequest = PageRequest.of(0, 20);
+        Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehiculeExceptSelectedVehicule(pagaebaleRequest,categoryEntity.getId(),vehiculeEntity.getId());
+        List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+        for (VehiculeEntity vehicule:vehiculeEntityList){
+            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
+            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                vehiculeImageDtos.add(vehiculeImageDto);
+            }
+            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+        }
+        hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
+        hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        return hashMap;
+    }
 }
