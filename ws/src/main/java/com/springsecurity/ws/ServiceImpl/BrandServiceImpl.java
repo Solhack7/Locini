@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 @RequiredArgsConstructor
@@ -29,14 +30,16 @@ public class BrandServiceImpl implements BrandService {
     private final Utils utils;
     private final ImageRepo imageRepo;
     @Override
-    public BrandDto addBrand(BrandRequest brandRequest,String idb_photo) {
+    public BrandDto addBrand(BrandRequest brandRequest,String idb_photo) throws BrandException {
         ModelMapper modelMapper = new ModelMapper();
         BrandEntity brandEntity = modelMapper.map(brandRequest, BrandEntity.class);
+        BrandEntity checkingName = brandRepo.findByNomBrand(brandRequest.getNomBrand().toLowerCase(Locale.ROOT));
+        if (checkingName!=null) throw new BrandException("Cette Brand Exixt Déja");
+        brandEntity.setNomBrand(brandRequest.getNomBrand().toLowerCase(Locale.ROOT));
         brandEntity.setIdbBrand(utils.generateStringId(15));
         ImageEntity image = imageRepo.findByIdBrowserPhoto(idb_photo);
         brandEntity.setImageBrand(image);
         brandRepo.save(brandEntity);
-
         BrandDto brandDto = modelMapper.map(brandEntity, BrandDto.class);
         return brandDto;
     }
@@ -57,9 +60,11 @@ public class BrandServiceImpl implements BrandService {
     public BrandDto updateBrand(String brandId, BrandRequest brandRequest) throws BrandException {
         ModelMapper modelMapper = new ModelMapper();
         BrandEntity brandEntity = brandRepo.findByIdbBrand(brandId);
+        BrandEntity checkingName = brandRepo.findByNomBrand(brandEntity.getNomBrand());
         if (brandEntity==null) throw new BrandException("Brand Introuvable");
+        if (checkingName.getNomBrand().equals(brandRequest.getNomBrand().toLowerCase(Locale.ROOT))) throw new BrandException("Ce Nom De Brand Exixt Déja");
+        brandEntity.setNomBrand(brandRequest.getNomBrand().toLowerCase(Locale.ROOT));
 
-        brandEntity.setNomBrand(brandRequest.getNomBrand());
         brandRepo.save(brandEntity);
         return modelMapper.map(brandEntity,BrandDto.class);
     }

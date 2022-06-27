@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public interface BrandService{
-    BrandDto addBrand(BrandRequest brandRequest,String idb_photo);
+    BrandDto addBrand(BrandRequest brandRequest,String idb_photo) throws BrandException;
 
     List<BrandDto> findAll();
 

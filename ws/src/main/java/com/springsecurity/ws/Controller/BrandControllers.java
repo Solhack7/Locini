@@ -58,8 +58,8 @@ public class BrandControllers {
             throw new BrandException("Vous Avez Raté un Champ obligatoire");
         ModelMapper modelMapper = new ModelMapper();
         BrandDto BrandDto = brandService.updateBrand(brandId, BrandRequest);
-        BrandResponse BrandResponse = modelMapper.map(BrandDto, BrandResponse.class);
-        return new ResponseEntity<BrandResponse>(BrandResponse, HttpStatus.ACCEPTED);
+        BrandResponse brandResponse = modelMapper.map(BrandDto, BrandResponse.class);
+        return new ResponseEntity<BrandResponse>(brandResponse, HttpStatus.ACCEPTED);
     }
     @DeleteMapping(path = "/delete_brand/{brandId}")
     public ResponseEntity<Object> deleteBrand(@PathVariable String brandId) throws BrandException {

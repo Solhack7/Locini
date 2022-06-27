@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BrandRepo extends CrudRepository<BrandEntity,Long> {
     BrandEntity findByIdbBrand(String idb);
+    BrandEntity findByNomBrand(String nom);
 }
