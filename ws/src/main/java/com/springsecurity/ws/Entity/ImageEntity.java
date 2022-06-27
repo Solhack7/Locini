@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "image") @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageEntity {
+
     @Id
     @GeneratedValue
     private long idPhoto;
@@ -23,6 +25,9 @@ public class ImageEntity {
 
     @Column(nullable = false, length = 52)
     private String imageFileName;
+
+    @OneToMany(mappedBy="imageBrand",cascade=CascadeType.PERSIST)
+    private List<BrandEntity> brandEntityList;
 
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL)
     private Set<VehiculeImageEntity> vehiculeImageEntitySet;

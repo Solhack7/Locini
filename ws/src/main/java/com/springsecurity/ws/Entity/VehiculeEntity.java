@@ -31,10 +31,16 @@ public class VehiculeEntity {
 
     @OneToMany(mappedBy = "image", cascade = CascadeType.ALL)
     private Set<VehiculeImageEntity> vehiculeImageEntitySet;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "partnaire_id")
     private PartenaireEntity partenaire;
+
     @ManyToOne
     @JoinColumn(name="category_id")
     private CategoryEntity categoryVehicule;
+
+    @ManyToOne
+    @JoinColumn(name="brand_id")
+    private BrandEntity brandVehicule;
 }
