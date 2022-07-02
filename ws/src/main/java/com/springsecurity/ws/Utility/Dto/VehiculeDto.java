@@ -18,4 +18,5 @@ public class VehiculeDto implements Serializable {
     private long place;
     private float pn;
     private CategoryDto categoryVehicule;
+    private BrandDto brandVehicule;
 }

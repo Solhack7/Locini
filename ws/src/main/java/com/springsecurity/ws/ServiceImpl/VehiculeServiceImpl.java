@@ -5,6 +5,7 @@ import com.springsecurity.ws.Exception.ImageException;
 import com.springsecurity.ws.Exception.PartnaireException;
 import com.springsecurity.ws.Exception.UsernameNotExist;
 import com.springsecurity.ws.Exception.VehiculeException;
+import com.springsecurity.ws.Repository.BrandRepo;
 import com.springsecurity.ws.Repository.CategorieRepo;
 import com.springsecurity.ws.Repository.VehiculeImageRepo;
 import com.springsecurity.ws.Repository.VehiculeRepo;
@@ -48,11 +49,14 @@ public class VehiculeServiceImpl implements VehiculeService {
     private final PartnaireService partnaireService;
     private final CategorieRepo categorieRepo;
     private final OffersService offersService;
+    private final BrandRepo brandRepo;
     @Override
     public HashMap<String, Object> addVehicule(VehiculeRequest vehiculeRequest) throws ImageException, PartnaireException {
         HashMap<String,Object> hashMap = new HashMap<String,Object>();
         PartenaireEntity partenaireEntity = partnaireService.checkExistPartenaire(vehiculeRequest.getPartenaireIdBrowser());
         CategoryEntity categoryEntity =categorieRepo.findByIdbCategory(vehiculeRequest.getCategoryIdb());
+        BrandEntity brandEntity = brandRepo.findByIdbBrand(vehiculeRequest.getBrandIdb());
+
         if(vehiculeRepo.getNumberOfVehiculeOfPartner(partenaireEntity.getId())<partenaireEntity.getOffer().getNbVehicule()){
             ModelMapper modelMapper = new ModelMapper();
             modelMapper.getConfiguration()
@@ -65,8 +69,8 @@ public class VehiculeServiceImpl implements VehiculeService {
             vehicule.setBrowserId(utils.generateStringId(15));
             vehicule.setPartenaire(partenaireEntity);
             vehicule.setCategoryVehicule(categoryEntity);
+            vehicule.setBrandVehicule(brandEntity);
             vehiculeRepo.save(vehicule);
-
             for (String imgId:vehiculeRequest.getImgsId()){
                 ImageEntity image = imageService.checkExixtImg(imgId);
                 VehiculeImageEntity vehiculeImageEntity = new VehiculeImageEntity();

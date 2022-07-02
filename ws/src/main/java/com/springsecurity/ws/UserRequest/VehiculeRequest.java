@@ -21,4 +21,5 @@ public class VehiculeRequest {
     private String partenaireIdBrowser;
     private float pn;
     private String categoryIdb;
+    private String brandIdb;
 }

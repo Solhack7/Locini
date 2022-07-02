@@ -64,7 +64,6 @@ public class BrandServiceImpl implements BrandService {
         if (brandEntity==null) throw new BrandException("Brand Introuvable");
         if (checkingName.getNomBrand().equals(brandRequest.getNomBrand().toLowerCase(Locale.ROOT))) throw new BrandException("Ce Nom De Brand Exixt Déja");
         brandEntity.setNomBrand(brandRequest.getNomBrand().toLowerCase(Locale.ROOT));
-
         brandRepo.save(brandEntity);
         return modelMapper.map(brandEntity,BrandDto.class);
     }

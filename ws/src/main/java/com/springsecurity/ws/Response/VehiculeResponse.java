@@ -18,4 +18,5 @@ public class VehiculeResponse {
     private long place;
     private float pn;
     private CategoryDto categoryVehicule;
+    private BrandResponse brandVehicule;
 }

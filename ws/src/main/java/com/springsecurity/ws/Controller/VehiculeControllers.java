@@ -28,7 +28,7 @@ public class VehiculeControllers {
     @PostMapping(path = "/add_vehicule",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HashMap<String,Object>> createVehicule(@RequestBody @Valid VehiculeRequest vehiculeRequest , Principal authentication) throws VehiculeException, ImageException, PartnaireException {
-        if (vehiculeRequest.getNomVehicule().isEmpty() || vehiculeRequest.getPlace() < 1 || vehiculeRequest.getImgsId().size()==0)
+        if (vehiculeRequest.getNomVehicule().isEmpty() || vehiculeRequest.getPlace() < 1 || vehiculeRequest.getImgsId().size()==0 || vehiculeRequest.getBrandIdb().isEmpty())
             throw new VehiculeException("Vous Avez Raté Un Champs Obligatoire");
         HashMap<String,Object> addVehicule = vehiculeService.addVehicule(vehiculeRequest);
         return new ResponseEntity<HashMap<String,Object>>(addVehicule, HttpStatus.CREATED);
