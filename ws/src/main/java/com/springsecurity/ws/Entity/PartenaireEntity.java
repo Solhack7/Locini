@@ -34,8 +34,6 @@ public class PartenaireEntity {
     private String adresse_agence;
     private String site_web;
     @OneToMany(mappedBy = "partenaire", cascade = CascadeType.ALL)
-    private Set<UsersAccount> usersAccounts;
-    @OneToMany(mappedBy = "partenaire", cascade = CascadeType.ALL)
     private List<VehiculeEntity> vehiculeEntityList;
     @OneToMany(mappedBy="partenaire",cascade=CascadeType.ALL)
     private List<OrdersEntity> order;

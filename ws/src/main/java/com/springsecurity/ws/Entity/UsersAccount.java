@@ -42,9 +42,6 @@ public class UsersAccount implements Serializable { // @Data From import lombok.
     private String[] authorities;
     private boolean isActive; // Enable/Disable
     private boolean isNotLocked; //Locked/UnLocked
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "partenaireData")
-    private PartenaireEntity partenaire;
     @OneToMany(mappedBy = "usersAccount", cascade = CascadeType.ALL)
     private List<PartenaireEntity> partenaireEntities;
     @OneToMany(mappedBy = "usersAccount", cascade = CascadeType.ALL)
@@ -61,7 +58,6 @@ public UsersAccount(){
         this.username = username;
         this.password = password;
         this.email = email;
-        this.partenaire = partenaireEntity;
         this.role = role;
         this.authorities = authorities;
         this.isActive = isActive;

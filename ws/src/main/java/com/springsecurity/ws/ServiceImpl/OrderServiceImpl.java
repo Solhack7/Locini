@@ -1,15 +1,12 @@
 package com.springsecurity.ws.ServiceImpl;
 
-import com.springsecurity.ws.Entity.OrdersEntity;
-import com.springsecurity.ws.Entity.PartenaireEntity;
-import com.springsecurity.ws.Entity.TypeOrderEntity;
-import com.springsecurity.ws.Entity.VehiculeEntity;
+import com.springsecurity.ws.Entity.*;
 import com.springsecurity.ws.Exception.PartnaireException;
+import com.springsecurity.ws.Exception.TypeOrdersException;
+import com.springsecurity.ws.Exception.UsernameNotExist;
 import com.springsecurity.ws.Exception.VehiculeException;
-import com.springsecurity.ws.Repository.OrdersRepo;
-import com.springsecurity.ws.Repository.PartenaireRepo;
-import com.springsecurity.ws.Repository.TypeOrderRepo;
-import com.springsecurity.ws.Repository.VehiculeRepo;
+import com.springsecurity.ws.Repository.*;
+import com.springsecurity.ws.Response.OrdersResponse;
 import com.springsecurity.ws.Service.OrderService;
 import com.springsecurity.ws.UserRequest.OrderRequest;
 import com.springsecurity.ws.Utility.Dto.OrdersDto;
@@ -17,12 +14,20 @@ import com.springsecurity.ws.Utility.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.protocol.HTTP;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -33,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private final VehiculeRepo vehiculeRepo;
     private final TypeOrderRepo typeOrderRepo;
     private final Utils utils;
+    private final UsersAccountRepository usersAccountRepository;
     private final OrdersRepo ordersRepo;
     private final PartenaireRepo partenaireRepo;
     @Override
@@ -60,5 +66,32 @@ public class OrderServiceImpl implements OrderService {
         messageSucces.put("MESSAGE_SUCCES","VOUS AVEZ AJOUTER AVEC SUCES Un Order");
         messageSucces.put("httpStatus", HttpStatus.CREATED.toString());
         return messageSucces;
+    }
+
+    @Override
+    public List<OrdersResponse> getOrdersByTypeAndToken(Principal authentication,long typeo,int page,int limit) throws UsernameNotExist, TypeOrdersException {
+        if(page>0){
+            page-=page;
+        }
+        ModelMapper modelMapper = new ModelMapper();
+        UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
+        if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
+        PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
+        TypeOrderEntity to= typeOrderRepo.findById(typeo);
+        if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+        Pageable pagaebaleRequest = PageRequest.of(page, limit,Sort.by("dtOrder").descending());
+        Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndTypeOrder(getPartenaire,to,pagaebaleRequest);
+        List<OrdersEntity> ordersEntities = ordersEntityPage.getContent();
+        List<OrdersDto> ordersDtos = new ArrayList<>();
+        for (OrdersEntity order:ordersEntities) {
+            OrdersDto ordersDto = modelMapper.map(order,OrdersDto.class);
+            ordersDtos.add(ordersDto);
+        }
+        List<OrdersResponse> orderResponses = new ArrayList<>();
+        for (OrdersDto order:ordersDtos) {
+            OrdersResponse ordersResponse = modelMapper.map(order,OrdersResponse.class);
+            orderResponses.add(ordersResponse);
+        }
+        return orderResponses;
     }
 }
