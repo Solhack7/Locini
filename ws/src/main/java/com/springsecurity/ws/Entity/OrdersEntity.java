@@ -38,6 +38,9 @@ public class OrdersEntity {
     @Column(nullable = false)
     private Date dtOrder;
 
+    @Column(nullable = true)
+    private Date dtPc;
+
     @ManyToOne
     @JoinColumn(name="typeo_id")
     private TypeOrderEntity typeOrder;

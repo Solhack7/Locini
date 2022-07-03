@@ -1,10 +1,7 @@
 package com.springsecurity.ws.ServiceImpl;
 
 import com.springsecurity.ws.Entity.*;
-import com.springsecurity.ws.Exception.PartnaireException;
-import com.springsecurity.ws.Exception.TypeOrdersException;
-import com.springsecurity.ws.Exception.UsernameNotExist;
-import com.springsecurity.ws.Exception.VehiculeException;
+import com.springsecurity.ws.Exception.*;
 import com.springsecurity.ws.Repository.*;
 import com.springsecurity.ws.Response.OrdersResponse;
 import com.springsecurity.ws.Service.OrderService;
@@ -93,5 +90,22 @@ public class OrderServiceImpl implements OrderService {
             orderResponses.add(ordersResponse);
         }
         return orderResponses;
+    }
+
+    @Override
+    public OrdersDto updateOrders(String order_idb, String typeo) throws OrderException, TypeOrdersException, ParseException {
+        ModelMapper modelMapper = new ModelMapper();
+        OrdersEntity ordersEntity = ordersRepo.findByIdbOrder(order_idb);
+        TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(typeo);
+        if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+        if (ordersEntity==null) throw  new OrderException("Ce Order Exixt Pas Pour Faire Une Update");
+        if ((ordersEntity.getTypeOrder().getId()+1)==to.getId() || to.getId()==4 ){
+            ordersEntity.setDtPc(utils.getDateNow());
+            ordersEntity.setTypeOrder(to);
+            ordersRepo.save(ordersEntity);
+        }else{
+            throw  new TypeOrdersException("Vous Pouvez Pas Effectuer Cette Action");
+        }
+        return modelMapper.map(ordersEntity,OrdersDto.class);
     }
 }

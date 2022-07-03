@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TypeOrderRepo extends JpaRepository<TypeOrderEntity,Long> {
     TypeOrderEntity findById(long id);
+    TypeOrderEntity findByIdbTypeo(String idb);
 }

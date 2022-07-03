@@ -21,6 +21,7 @@ public class OrdersResponse {
     private Date dtOrder;
     private TypeOrderResponse typeOrder;
     private String tel;
+    private Date dtPc;
     private VehiculeResponse vehicule;
     private PartnaireResponse partenaire;
 }

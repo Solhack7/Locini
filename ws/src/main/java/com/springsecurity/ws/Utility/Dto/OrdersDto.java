@@ -18,6 +18,7 @@ public class OrdersDto {
     private Date dtfrom;
     private Date dtto;
     private Date dtOrder;
+    private Date dtPc;
     private String tel;
     private TypeOrderDto typeOrder;
     private VehiculeDto vehicule;

@@ -42,4 +42,13 @@ public class OrdersControllers {
         List<OrdersResponse> payload = orderService.getOrdersByTypeAndToken(authentication,typeo,page,limit);
         return new ResponseEntity<List<OrdersResponse>>(payload, HttpStatus.OK);
     }
+
+    @PutMapping(path = "/update_orders/{order_idb}",produces = { MediaType.APPLICATION_XML_VALUE,
+            MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<OrdersResponse> updatedLivraison( @RequestParam(value = "typeo") String typeo,@PathVariable String order_idb) throws ParseException, OrderException, TypeOrdersException {
+        ModelMapper modelMapper = new ModelMapper();
+        OrdersDto ordersDto = orderService.updateOrders(order_idb,typeo);
+        OrdersResponse ordersResponse = modelMapper.map(ordersDto, OrdersResponse.class);
+        return new ResponseEntity<OrdersResponse>(ordersResponse, HttpStatus.ACCEPTED);
+    }
 }
