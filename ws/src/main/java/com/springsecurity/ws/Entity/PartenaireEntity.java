@@ -37,7 +37,8 @@ public class PartenaireEntity {
     private Set<UsersAccount> usersAccounts;
     @OneToMany(mappedBy = "partenaire", cascade = CascadeType.ALL)
     private List<VehiculeEntity> vehiculeEntityList;
-
+    @OneToMany(mappedBy="partenaire",cascade=CascadeType.ALL)
+    private List<OrdersEntity> order;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private UsersAccount usersAccount;

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -35,5 +36,12 @@ public class Utils {
             helpers=i;
         }
         return helpers;
+    }
+    public Date getDateNow() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+        SimpleDateFormat formatter6=new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+        Date date = new Date();
+        Date dateHelpers = formatter6.parse(formatter.format(date));
+        return dateHelpers;
     }
 }

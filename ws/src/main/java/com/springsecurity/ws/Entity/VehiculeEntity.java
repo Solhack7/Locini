@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -43,4 +44,7 @@ public class VehiculeEntity {
     @ManyToOne
     @JoinColumn(name="brand_id")
     private BrandEntity brandVehicule;
+
+    @OneToMany(mappedBy="typeOrder",cascade=CascadeType.ALL)
+    private List<OrdersEntity> order;
 }
