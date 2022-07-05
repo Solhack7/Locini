@@ -104,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
             ordersEntity.setTypeOrder(to);
             ordersRepo.save(ordersEntity);
         }else{
-            throw  new TypeOrdersException("Vous Pouvez Pas Effectuer Cette Action");
+            throw new TypeOrdersException("Vous Pouvez Pas Effectuer Cette Action");
         }
         return modelMapper.map(ordersEntity,OrdersDto.class);
     }

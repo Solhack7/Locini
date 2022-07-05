@@ -26,8 +26,9 @@ import java.util.List;
 @RequestMapping("/order") // localhost:8084/api/order
 @RequiredArgsConstructor
 public class OrdersControllers {
-    
+
     private final OrderService orderService;
+
     @PostMapping(path = "/add_order",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HashMap<String,String>> addOrder(@RequestBody OrderRequest orderRequest) throws OrderException, ParseException, VehiculeException, PartnaireException {
@@ -37,6 +38,7 @@ public class OrdersControllers {
         HashMap<String,String> addToDb = orderService.addOrder(orderRequest);
         return new ResponseEntity<HashMap<String,String>>(addToDb, HttpStatus.CREATED);
     }
+
     @GetMapping(path = "/getOrders", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<OrdersResponse>> getOrdersByTypeAndToken(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "90") int limit,@RequestParam(value = "typeo", defaultValue = "1") long typeo, Principal authentication) throws UsernameNotExist, TypeOrdersException {
         List<OrdersResponse> payload = orderService.getOrdersByTypeAndToken(authentication,typeo,page,limit);
@@ -51,4 +53,5 @@ public class OrdersControllers {
         OrdersResponse ordersResponse = modelMapper.map(ordersDto, OrdersResponse.class);
         return new ResponseEntity<OrdersResponse>(ordersResponse, HttpStatus.ACCEPTED);
     }
+
 }

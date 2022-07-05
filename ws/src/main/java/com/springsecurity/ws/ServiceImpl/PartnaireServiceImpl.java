@@ -19,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.security.Principal;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
@@ -72,7 +75,9 @@ public class PartnaireServiceImpl implements PartnaireService {
         PartenaireEntity partenaire = partenaireRepo.findByBrowserId(idBrowserPartner);
         PartnaireDto partnaireDto = modelMapper.map(partenaire,PartnaireDto.class);
         hashmapVehicule.put("info",partnaireDto);
-        List<VehiculeEntity> vehiculeEntityList = vehiculeRepo.findByPartenaire(partenaire);
+        Pageable pagaebaleRequest = PageRequest.of(0, 20);
+        Page<VehiculeEntity> vehiculeEntityList = vehiculeRepo.findByPartenaire(partenaire,pagaebaleRequest);
+
         List<PartnaireVehiculeDisplayDto> partnaireVehiculeDisplayDtos = new ArrayList<>();
         for (VehiculeEntity vehicule:vehiculeEntityList){
             VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
