@@ -277,11 +277,13 @@ public class VehiculeServiceImpl implements VehiculeService {
 
     @Override
     public HashMap<String, Object> filterAction(int page, int limit, Float pnmin, Float pnmax, String idb_brand, String idb_category) throws BrandException, CategoryException {
+
         ModelMapper modelMapper = new ModelMapper();
         HashMap<String , Object> hashMap = new HashMap<>();
         if (page>0) {
             page -= page;
         }
+
         Pageable pagaebaleRequest = PageRequest.of(page, limit, Sort.by("pn").ascending());
         if(((pnmin)==null)&&((pnmax)==null)&&(idb_category==null))
         {
@@ -324,9 +326,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             }
             hashMap.put("payload",partnaireVehiculeDisplayDtos);
         }
-        else if (((pnmin)==null)&&((pnmax)==null)&&(idb_brand==null)){
-            hashMap.put("payload",getByCategory(page,limit,idb_category));
-        }
+
         else if (idb_brand==null){
             return getVehiculeByCBetweenPminAndPmax(idb_category,page,limit,pnmin,pnmax);
         }
@@ -398,5 +398,169 @@ public class VehiculeServiceImpl implements VehiculeService {
             hashMap.put("payload",partnaireVehiculeDisplayDtos);
         }
         return hashMap;
+    }
+
+    @Override
+    public HashMap<String, Object> filterActionByJwt(int page, int limit, Float pnmin, Float pnmax, String idb_brand, String idb_category, Principal authentication) throws BrandException, CategoryException, UsernameNotExist {
+        ModelMapper modelMapper = new ModelMapper();
+        HashMap<String , Object> hashMap = new HashMap<>();
+        if (page>0) {
+            page -= page;
+        }
+        UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
+        if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
+        PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
+
+        Pageable pagaebaleRequest = PageRequest.of(page, limit, Sort.by("pn").ascending());
+        if(((pnmin)==null)&&((pnmax)==null)&&(idb_category==null))
+        {
+            BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
+            if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
+            Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndPartenaire(brand,getPartenaire,pagaebaleRequest);
+            List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+            for (VehiculeEntity vehicule:vehiculeEntityList){
+                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                    vehiculeImageDtos.add(vehiculeImageDto);
+                }
+                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+            }
+            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        }
+        else if((idb_brand==null) && (idb_category==null)){
+            Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByPricingBetweenPminAndPmaxAndPartenaire(pagaebaleRequest,pnmin,pnmax,getPartenaire.getId());
+            List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+            for (VehiculeEntity vehicule:vehiculeEntityList){
+                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                    vehiculeImageDtos.add(vehiculeImageDto);
+                }
+                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+            }
+            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        }
+        else if ((pnmin==null)&&(pnmax==null)&&(idb_brand==null)){
+            hashMap.put("payload",getByCategoryAndJwt(page,limit,idb_category,authentication));
+        }
+        else if (idb_brand==null){
+            return getVehiculeByCBetweenPminAndPmax(idb_category,page,limit,pnmin,pnmax);
+        }
+        else if (idb_category==null){
+            BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
+            if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
+            Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndPricingBetwenAndPartenaire(pagaebaleRequest,brand.getId(),pnmin,pnmax,getPartenaire.getId());
+            List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+            for (VehiculeEntity vehicule:vehiculeEntityList){
+                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                    vehiculeImageDtos.add(vehiculeImageDto);
+                }
+                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+            }
+            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        }
+        else if(((pnmin)==null)&&((pnmax)==null)){
+            BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
+            if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
+            CategoryEntity categoryEntity = categorieRepo.findByIdbCategory(idb_category);
+            if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
+            Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndCategoryVehiculeAndPartenaire(pagaebaleRequest,brand,categoryEntity,getPartenaire);
+            List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+            for (VehiculeEntity vehicule:vehiculeEntityList){
+                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                    vehiculeImageDtos.add(vehiculeImageDto);
+                }
+                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+            }
+            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        }
+        else {
+            BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
+            if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
+            CategoryEntity categoryEntity = categorieRepo.findByIdbCategory(idb_category);
+            if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
+            Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndCAndCategoryVehiculeAndFiltrerPrincingAndPartenaire(pagaebaleRequest,brand.getId(),categoryEntity.getId(),pnmin,pnmax,getPartenaire.getId());
+            List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+            for (VehiculeEntity vehicule:vehiculeEntityList){
+                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
+                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                    vehiculeImageDtos.add(vehiculeImageDto);
+                }
+                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+            }
+            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        }
+        return hashMap;
+    }
+
+    @Override
+    public List<PartnaireVehiculeDisplayDto> getByCategoryAndJwt(int page, int limit, String idbCategory, Principal authentication) throws CategoryException, UsernameNotExist {
+        CategoryEntity categoryEntity = categorieRepo.findByIdbCategory(idbCategory);
+        if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
+        UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
+        if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
+        PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
+
+        HashMap<String , Object> hashMap = new HashMap<>();
+        if (page>0) {
+            page = page -1;
+        }
+        ModelMapper modelmapper = new ModelMapper();
+        modelmapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        Pageable pagaebaleRequest = PageRequest.of(page, limit);
+        Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehiculeAndPartenaire(pagaebaleRequest,categoryEntity,getPartenaire);
+        List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
+        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
+        for (VehiculeEntity vehicule:vehiculeEntityList){
+            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
+            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
+            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
+            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
+            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
+                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
+                vehiculeImageDtos.add(vehiculeImageDto);
+            }
+            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
+            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
+            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
+        }
+        return partnaireVehiculeDisplayDtos;
     }
 }

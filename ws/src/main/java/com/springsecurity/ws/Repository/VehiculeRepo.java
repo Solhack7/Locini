@@ -40,4 +40,19 @@ public interface VehiculeRepo extends PagingAndSortingRepository< VehiculeEntity
     Page<VehiculeEntity> findByBrandVehiculeAndCAndCategoryVehiculeAndFiltrerPrincing(Pageable pagaebaleRequest,@Param("id_brand") long idbrand,@Param("id_category") long idcat,@Param("pnmin") float pnmin,@Param("pnmax") float pnmax);
     @Query(value = "SELECT * FROM vehicule vc WHERE vc.brand_id=:id_brand AND vc.pn BETWEEN :pnmin AND :pnmax ",nativeQuery = true)
     Page<VehiculeEntity> findByBrandVehiculeAndPricingBetwen(Pageable pagaebaleRequest,@Param("id_brand") long idbrand,@Param("pnmin") float pnmin,@Param("pnmax") float pnmax);
+
+    Page<VehiculeEntity> findByBrandVehiculeAndPartenaire(BrandEntity brand,PartenaireEntity partenaire,Pageable pageable);
+
+    @Query(value = "SELECT * FROM vehicule vc WHERE vc.partnaire_id=:id_partnaire AND vc.pn BETWEEN :pnmin AND :pnmax",nativeQuery = true)
+    Page<VehiculeEntity> findByPricingBetweenPminAndPmaxAndPartenaire(Pageable pagaebaleRequest, @Param("pnmin") float pnmin,@Param("pnmax") float pnmax,@Param("id_partnaire") long idp);
+
+    Page<VehiculeEntity> findByCategoryVehiculeAndPartenaire(Pageable pagaebaleRequest, CategoryEntity categoryEntity, PartenaireEntity getPartenaire);
+
+    @Query(value = "SELECT * FROM vehicule vc WHERE vc.brand_id=:id_brand AND vc.partnaire_id=:id_partnaire AND vc.pn BETWEEN :pnmin AND :pnmax ",nativeQuery = true)
+    Page<VehiculeEntity> findByBrandVehiculeAndPricingBetwenAndPartenaire(Pageable pagaebaleRequest,@Param("id_brand") long idbrand,@Param("pnmin") float pnmin,@Param("pnmax") float pnmax,@Param("id_partnaire")long idp);
+
+    Page<VehiculeEntity> findByBrandVehiculeAndCategoryVehiculeAndPartenaire(Pageable pagaebaleRequest, BrandEntity brand, CategoryEntity categoryEntity, PartenaireEntity getPartenaire);
+
+    @Query(value = "SELECT * FROM vehicule vc WHERE vc.category_id=:id_category AND vc.brand_id=:id_brand  AND vc.partnaire_id=:id_partnaire AND vc.pn BETWEEN :pnmin AND :pnmax ",nativeQuery = true)
+    Page<VehiculeEntity> findByBrandVehiculeAndCAndCategoryVehiculeAndFiltrerPrincingAndPartenaire(Pageable pagaebaleRequest,@Param("id_brand") long idbrand,@Param("id_category") long idcat,@Param("pnmin") float pnmin,@Param("pnmax") float pnmax,@Param("id_partnaire") long idp);
 }

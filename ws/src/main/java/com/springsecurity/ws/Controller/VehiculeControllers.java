@@ -79,4 +79,10 @@ public class VehiculeControllers {
         return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/filtringByJwt", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<HashMap<String,Object>> filterActionByJwt(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "24") int limit,@RequestParam(value = "pnmin",required = false) Float pnmin, @RequestParam(value = "pnmax",required = false) Float pnmax,@RequestParam(value = "idb_brand",required = false) String idb_brand,@RequestParam(value = "idb_category",required = false) String idb_category,Principal authentication) throws BrandException, CategoryException, UsernameNotExist {
+        HashMap<String,Object> payload = vehiculeService.filterActionByJwt(page,limit,pnmin,pnmax,idb_brand,idb_category,authentication);
+        return new ResponseEntity<HashMap<String,Object>>(payload, HttpStatus.OK);
+    }
+
 }

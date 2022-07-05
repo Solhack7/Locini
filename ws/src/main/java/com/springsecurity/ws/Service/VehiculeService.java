@@ -26,4 +26,8 @@ public interface VehiculeService {
     HashMap<String, Object> getVehiculeByJwt(Principal authentication, int page, int limit) throws UsernameNotExist;
 
     HashMap<String, Object> filterAction(int page, int limit, Float pnmin, Float pnmax, String idb_brand, String idb_category) throws BrandException, CategoryException;
+
+    HashMap<String, Object> filterActionByJwt(int page, int limit, Float pnmin, Float pnmax, String idb_brand, String idb_category, Principal authentication) throws BrandException, CategoryException, UsernameNotExist;
+
+    List<PartnaireVehiculeDisplayDto> getByCategoryAndJwt(int page, int limit,String idbCategory,Principal authentication) throws CategoryException, UsernameNotExist;
 }
