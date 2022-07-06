@@ -115,21 +115,7 @@ public class VehiculeServiceImpl implements VehiculeService {
         Pageable pagaebaleRequest = PageRequest.of(page, limit);
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehicule(pagaebaleRequest,categoryEntity);
         List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-        for (VehiculeEntity vehicule:vehiculeEntityList){
-            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
-            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                vehiculeImageDtos.add(vehiculeImageDto);
-            }
-            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-        }
-
+        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = utils.getVehiculeAndImage(vehiculeEntityList);
         return partnaireVehiculeDisplayDtos;
     }
 
@@ -143,22 +129,8 @@ public class VehiculeServiceImpl implements VehiculeService {
         Pageable pagaebaleRequest = PageRequest.of(0,2, Sort.by("pn").ascending());
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findAll(pagaebaleRequest);
         List<VehiculeEntity> vehiculeEntityList = vehiculeEntityPage.getContent();
-        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-        for (VehiculeEntity vehicule:vehiculeEntityList){
-            VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                vehiculeImageDtos.add(vehiculeImageDto);
-            }
-            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-        }
+        hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         hashMap.put("msg","request has been proccesed succes");
-        hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
     }
 
@@ -193,22 +165,8 @@ public class VehiculeServiceImpl implements VehiculeService {
         Pageable pagaebaleRequest = PageRequest.of(0, 20);
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehiculeExceptSelectedVehicule(pagaebaleRequest,categoryEntity.getId(),vehiculeEntity.getId());
         List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-        for (VehiculeEntity vehicule:vehiculeEntityList){
-            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
-            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                vehiculeImageDtos.add(vehiculeImageDto);
-            }
-            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-        }
+        hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
-        hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
     }
 
@@ -224,22 +182,8 @@ public class VehiculeServiceImpl implements VehiculeService {
         Pageable pagaebaleRequest = PageRequest.of(page, limit, Sort.by("pn").ascending());
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryAndPricingBetweenPminAndPmax(pagaebaleRequest,pnmin,pnmax,categoryEntity.getId());
         List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-        for (VehiculeEntity vehicule:vehiculeEntityList){
-            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
-            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                vehiculeImageDtos.add(vehiculeImageDto);
-            }
-            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-        }
+        hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         hashMap.put("category",modelmapper.map(categoryEntity, CategoryDto.class));
-        hashMap.put("payload",partnaireVehiculeDisplayDtos);
         return hashMap;
 
     }
@@ -258,20 +202,7 @@ public class VehiculeServiceImpl implements VehiculeService {
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByPartenaire(getPartenaire,pagaebaleRequest);
         List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
         List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-        for (VehiculeEntity vehicule:vehiculeEntityList){
-            VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                vehiculeImageDtos.add(vehiculeImageDto);
-            }
-            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-        }
-        hashMap.put("payload",partnaireVehiculeDisplayDtos);
+        hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         return hashMap;
     }
 
@@ -292,39 +223,13 @@ public class VehiculeServiceImpl implements VehiculeService {
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehicule(brand,pagaebaleRequest);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
             List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else if((idb_brand==null) && (idb_category==null)){
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByPricingBetweenPminAndPmax(pagaebaleRequest,pnmin,pnmax);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
             List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
 
         else if (idb_brand==null){
@@ -335,21 +240,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndPricingBetwen(pagaebaleRequest,brand.getId(),pnmin,pnmax);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else if(((pnmin)==null)&&((pnmax)==null)){
             BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
@@ -358,21 +249,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndCategoryVehicule(pagaebaleRequest,brand,categoryEntity);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else {
             BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
@@ -381,21 +258,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndCAndCategoryVehiculeAndFiltrerPrincing(pagaebaleRequest,brand.getId(),categoryEntity.getId(),pnmin,pnmax);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         return hashMap;
     }
@@ -418,40 +281,12 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndPartenaire(brand,getPartenaire,pagaebaleRequest);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else if((idb_brand==null) && (idb_category==null)){
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByPricingBetweenPminAndPmaxAndPartenaire(pagaebaleRequest,pnmin,pnmax,getPartenaire.getId());
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else if ((pnmin==null)&&(pnmax==null)&&(idb_brand==null)){
             hashMap.put("payload",getByCategoryAndJwt(page,limit,idb_category,authentication));
@@ -464,21 +299,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(brand==null) throw  new BrandException("Cette Brand Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndPricingBetwenAndPartenaire(pagaebaleRequest,brand.getId(),pnmin,pnmax,getPartenaire.getId());
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else if(((pnmin)==null)&&((pnmax)==null)){
             BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
@@ -487,21 +308,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndCategoryVehiculeAndPartenaire(pagaebaleRequest,brand,categoryEntity,getPartenaire);
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         else {
             BrandEntity brand = brandRepo.findByIdbBrand(idb_brand);
@@ -510,21 +317,7 @@ public class VehiculeServiceImpl implements VehiculeService {
             if(categoryEntity==null) throw new CategoryException("Cette Category Exixt Pas");
             Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByBrandVehiculeAndCAndCategoryVehiculeAndFiltrerPrincingAndPartenaire(pagaebaleRequest,brand.getId(),categoryEntity.getId(),pnmin,pnmax,getPartenaire.getId());
             List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-            List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-            for (VehiculeEntity vehicule:vehiculeEntityList){
-                VehiculeDto vehiculeDto = modelMapper.map(vehicule,VehiculeDto.class);
-                PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-                List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-                List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-                for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                    VehiculeImageDto vehiculeImageDto = modelMapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                    vehiculeImageDtos.add(vehiculeImageDto);
-                }
-                partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-                partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-                partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-            }
-            hashMap.put("payload",partnaireVehiculeDisplayDtos);
+            hashMap.put("payload",utils.getVehiculeAndImage(vehiculeEntityList));
         }
         return hashMap;
     }
@@ -536,8 +329,6 @@ public class VehiculeServiceImpl implements VehiculeService {
         UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
         if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
         PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
-
-        HashMap<String , Object> hashMap = new HashMap<>();
         if (page>0) {
             page = page -1;
         }
@@ -547,20 +338,7 @@ public class VehiculeServiceImpl implements VehiculeService {
         Pageable pagaebaleRequest = PageRequest.of(page, limit);
         Page<VehiculeEntity> vehiculeEntityPage = vehiculeRepo.findByCategoryVehiculeAndPartenaire(pagaebaleRequest,categoryEntity,getPartenaire);
         List<VehiculeEntity> vehiculeEntityList =vehiculeEntityPage.getContent();
-        List<PartnaireVehiculeDisplayDto>  partnaireVehiculeDisplayDtos = new ArrayList<>();
-        for (VehiculeEntity vehicule:vehiculeEntityList){
-            VehiculeDto vehiculeDto = modelmapper.map(vehicule,VehiculeDto.class);
-            PartnaireVehiculeDisplayDto partnaireVehiculeDisplayDto = new PartnaireVehiculeDisplayDto();
-            List<VehiculeImageEntity> vehiculeImageEntities = vehiculeImageRepo.findByVehicule(vehicule);
-            List<VehiculeImageDto> vehiculeImageDtos= new ArrayList<>();
-            for (VehiculeImageEntity vehiculeImageEntity : vehiculeImageEntities){
-                VehiculeImageDto vehiculeImageDto = modelmapper.map(vehiculeImageEntity,VehiculeImageDto.class);
-                vehiculeImageDtos.add(vehiculeImageDto);
-            }
-            partnaireVehiculeDisplayDto.setImg(vehiculeImageDtos);
-            partnaireVehiculeDisplayDto.setVehicule(vehiculeDto);
-            partnaireVehiculeDisplayDtos.add(partnaireVehiculeDisplayDto);
-        }
+        List<PartnaireVehiculeDisplayDto> partnaireVehiculeDisplayDtos = utils.getVehiculeAndImage(vehiculeEntityList);
         return partnaireVehiculeDisplayDtos;
     }
 }
