@@ -4,7 +4,6 @@ import com.springsecurity.ws.Entity.*;
 import com.springsecurity.ws.Exception.*;
 import com.springsecurity.ws.Repository.*;
 import com.springsecurity.ws.Service.ImageService;
-import com.springsecurity.ws.Service.OffersService;
 import com.springsecurity.ws.Service.PartnaireService;
 import com.springsecurity.ws.Service.VehiculeService;
 import com.springsecurity.ws.UserRequest.VehiculeRequest;
@@ -42,7 +41,6 @@ public class VehiculeServiceImpl implements VehiculeService {
     private final VehiculeImageRepo vehiculeImageRepo;
     private final PartnaireService partnaireService;
     private final CategorieRepo categorieRepo;
-    private final OffersService offersService;
     private final BrandRepo brandRepo;
     private final UsersAccountRepository usersAccountRepository;
     private final PartenaireRepo partenaireRepo;
@@ -122,7 +120,6 @@ public class VehiculeServiceImpl implements VehiculeService {
     @Override
     public HashMap<String, Object> getByLowPrice() {
         HashMap<String , Object> hashMap = new HashMap<>();
-        ModelMapper modelMapper = new ModelMapper();
         ModelMapper modelmapper = new ModelMapper();
         modelmapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
@@ -190,7 +187,6 @@ public class VehiculeServiceImpl implements VehiculeService {
 
     @Override
     public HashMap<String, Object> getVehiculeByJwt(Principal authentication, int page, int limit) throws UsernameNotExist {
-        ModelMapper modelMapper = new ModelMapper();
         HashMap<String , Object> hashMap = new HashMap<>();
         if(page>0){
             page-=page;
@@ -209,7 +205,6 @@ public class VehiculeServiceImpl implements VehiculeService {
     @Override
     public HashMap<String, Object> filterAction(int page, int limit, Float pnmin, Float pnmax, String idb_brand, String idb_category) throws BrandException, CategoryException {
 
-        ModelMapper modelMapper = new ModelMapper();
         HashMap<String , Object> hashMap = new HashMap<>();
         if (page>0) {
             page -= page;
@@ -265,7 +260,6 @@ public class VehiculeServiceImpl implements VehiculeService {
 
     @Override
     public HashMap<String, Object> filterActionByJwt(int page, int limit, Float pnmin, Float pnmax, String idb_brand, String idb_category, Principal authentication) throws BrandException, CategoryException, UsernameNotExist {
-        ModelMapper modelMapper = new ModelMapper();
         HashMap<String , Object> hashMap = new HashMap<>();
         if (page>0) {
             page -= page;

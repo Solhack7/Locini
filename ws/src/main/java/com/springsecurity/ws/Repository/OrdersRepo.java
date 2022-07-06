@@ -8,10 +8,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface OrdersRepo extends PagingAndSortingRepository<OrdersEntity,Long> {
     Page<OrdersEntity> findByPartenaireAndTypeOrder(PartenaireEntity partenaire, TypeOrderEntity typeo, Pageable pagaebaleRequest);
     OrdersEntity findByIdbOrder(String idb);
+
+    List<OrdersEntity> findByPartenaireAndTypeOrderAndAndDtOrderGreaterThan(PartenaireEntity getPartenaire, TypeOrderEntity to, Date dt);
+
+    List<OrdersEntity> findByPartenaireAndTypeOrderAndAndDtOrderBetween(PartenaireEntity getPartenaire, TypeOrderEntity to, Date dtFrom,Date dtTo);
 }
+

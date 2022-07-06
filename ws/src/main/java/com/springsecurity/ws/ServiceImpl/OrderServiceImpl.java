@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.security.Principal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("getVehiculesOfOrder",vehicule);
         OrdersEntity orderEntity = new OrdersEntity();
         orderEntity.setDtOrder(utils.getDateNow());
+        orderEntity.setDtOrderF(utils.getDateNow());
         orderEntity.setIdbOrder(utils.generateStringId(20));
         orderEntity.setFn(orderRequest.getFn());
         orderEntity.setLn(orderRequest.getLn());
@@ -107,5 +110,36 @@ public class OrderServiceImpl implements OrderService {
             throw new TypeOrdersException("Vous Pouvez Pas Effectuer Cette Action");
         }
         return modelMapper.map(ordersEntity,OrdersDto.class);
+    }
+
+    @Override
+    public List<OrdersResponse> getOrdersByTypeAndTokenAndDate(String findByIdbTypeo, Principal principal, String dt,String dtFrom,String dtTo) throws UsernameNotExist, TypeOrdersException, ParseException {
+        ModelMapper modelMapper = new ModelMapper();
+        List<OrdersEntity> ordersEntities = new ArrayList<>();
+        UsersAccount account = usersAccountRepository.findByUsername(principal.getName());
+        if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
+        PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
+        TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(findByIdbTypeo);
+        if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+        if(dtFrom==null&&dtTo==null){
+            ordersEntities= ordersRepo.findByPartenaireAndTypeOrderAndAndDtOrderGreaterThan(getPartenaire,to,utils.convertStringToDate(dt));
+            log.info("DATE === {}",utils.convertStringToDate(dt));
+            System.out.println(utils.convertStringToDate(dt));
+        }
+        else if(dt==null){
+            ordersEntities = ordersRepo.findByPartenaireAndTypeOrderAndAndDtOrderBetween(getPartenaire,to,utils.convertStringToDate(dtFrom),utils.convertStringToDate(dtTo));
+        }
+        List<OrdersDto> ordersDtos = new ArrayList<>();
+        for (OrdersEntity order:ordersEntities) {
+            OrdersDto ordersDto = modelMapper.map(order,OrdersDto.class);
+            ordersDtos.add(ordersDto);
+        }
+        List<OrdersResponse> orderResponses = new ArrayList<>();
+        for (OrdersDto order:ordersDtos) {
+            OrdersResponse ordersResponse = modelMapper.map(order,OrdersResponse.class);
+            orderResponses.add(ordersResponse);
+        }
+        return orderResponses;
+
     }
 }

@@ -4,6 +4,7 @@ package com.springsecurity.ws.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -37,6 +38,10 @@ public class OrdersEntity {
 
     @Column(nullable = false)
     private Date dtOrder;
+
+    @Column(nullable = true)
+    @DateTimeFormat(pattern="yyyy-mm-dd")
+    private Date dtOrderF;
 
     @Column(nullable = true)
     private Date dtPc;

@@ -7,6 +7,9 @@ import com.springsecurity.ws.Repository.VehiculeImageRepo;
 import com.springsecurity.ws.Utility.Dto.PartnaireVehiculeDisplayDto;
 import com.springsecurity.ws.Utility.Dto.VehiculeDto;
 import com.springsecurity.ws.Utility.Dto.VehiculeImageDto;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -14,22 +17,15 @@ import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class Utils {
 
     private final Random RANDOM = new SecureRandom();
     private final String ALPHANUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private final VehiculeImageRepo vehiculeImageRepo;
-
-    public Utils(VehiculeImageRepo vehiculeImageRepo) {
-        this.vehiculeImageRepo = vehiculeImageRepo;
-    }
-
 
     public String generateStringId(int length) {
         StringBuilder returnValue = new StringBuilder(length);
@@ -50,6 +46,11 @@ public class Utils {
             helpers=i;
         }
         return helpers;
+    }
+    public Date convertStringToDate(String datStr) throws ParseException {
+        //Date date1=new SimpleDateFormat("yyyy-mm-dd").parse(datStr);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.parse(datStr);
     }
     public Date getDateNow() throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
