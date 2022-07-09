@@ -122,12 +122,12 @@ public class OrderServiceImpl implements OrderService {
         TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(findByIdbTypeo);
         if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
         if(dtFrom==null&&dtTo==null){
-            ordersEntities= ordersRepo.findByPartenaireAndTypeOrderAndAndDtOrderGreaterThan(getPartenaire,to,utils.convertStringToDate(dt));
+            ordersEntities= ordersRepo.findByPartenaireAndTypeOrderAndDtOrderGreaterThan(getPartenaire,to,utils.convertStringToDate(dt));
             log.info("DATE === {}",utils.convertStringToDate(dt));
             System.out.println(utils.convertStringToDate(dt));
         }
         else if(dt==null){
-            ordersEntities = ordersRepo.findByPartenaireAndTypeOrderAndAndDtOrderBetween(getPartenaire,to,utils.convertStringToDate(dtFrom),utils.convertStringToDate(dtTo));
+            ordersEntities = ordersRepo.findByPartenaireAndTypeOrderAndDtOrderBetween(getPartenaire,to,utils.convertStringToDate(dtFrom),utils.convertStringToDate(dtTo));
         }
         List<OrdersDto> ordersDtos = new ArrayList<>();
         for (OrdersEntity order:ordersEntities) {

@@ -1,6 +1,7 @@
 package com.springsecurity.ws.Controller;
 
 
+import com.springsecurity.ws.Exception.InvoiceException;
 import com.springsecurity.ws.Exception.TypeOrdersException;
 import com.springsecurity.ws.Exception.UsernameNotExist;
 import com.springsecurity.ws.Response.OrdersResponse;
@@ -26,7 +27,9 @@ import java.util.List;
 public class InvoiceControllers {
     private final OrderService orderService;
     @GetMapping("/ExportExcel/{type_order}")
-    public ModelAndView exportToExcel(@PathVariable String type_order, @RequestParam(value = "dt",required = false) String dt,@RequestParam(value = "dt_from",required = false) String dtFrom,@RequestParam(value = "dt_to",required = false) String dtTo, Principal principal) throws UsernameNotExist, TypeOrdersException, ParseException {
+    public ModelAndView exportToExcel(@PathVariable String type_order, @RequestParam(value = "dt",required = false) String dt,@RequestParam(value = "dt_from",required = false) String dtFrom,@RequestParam(value = "dt_to",required = false) String dtTo, Principal principal) throws UsernameNotExist, TypeOrdersException, ParseException, InvoiceException {
+            if((dt==null&&dtFrom==null&&dtTo==null)||(dt!=null&&dtFrom!=null&&dtTo!=null)
+                || (dt!=null&&dtFrom!=null) || (dt!=null&&dtTo!=null)) throw  new InvoiceException("Vous Avez Une Bad request");
             List<OrdersResponse> orders = orderService.getOrdersByTypeAndTokenAndDate(type_order,principal,dt,dtFrom,dtTo);
             ModelAndView mav = new ModelAndView();
             mav.setView(new ExportOrdersExcel());
