@@ -23,4 +23,5 @@ public class OrdersDto {
     private TypeOrderDto typeOrder;
     private VehiculeDto vehicule;
     private PartnaireDto partenaire;
+    private CityDto city;
 }

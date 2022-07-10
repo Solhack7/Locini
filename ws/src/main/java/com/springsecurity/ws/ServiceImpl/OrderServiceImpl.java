@@ -40,9 +40,11 @@ public class OrderServiceImpl implements OrderService {
     private final UsersAccountRepository usersAccountRepository;
     private final OrdersRepo ordersRepo;
     private final PartenaireRepo partenaireRepo;
+    private final CityRepo cityRepo;
     @Override
-    public HashMap<String, String> addOrder(OrderRequest orderRequest) throws VehiculeException, ParseException, PartnaireException {
-
+    public HashMap<String, String> addOrder(OrderRequest orderRequest) throws VehiculeException, ParseException, PartnaireException, CityException {
+        CityEntity city = cityRepo.findByIdbCity(orderRequest.getIdbCity());
+        if (city==null) throw  new CityException("Cette Ville Exixt Pas");
         VehiculeEntity vehicule = vehiculeRepo.findByBrowserId(orderRequest.getIdbVehicule());
         if (vehicule==null) throw  new VehiculeException("Cette Vehicule Exixt Pas");
         PartenaireEntity partenaire = partenaireRepo.findByBrowserId(vehicule.getPartenaire().getBrowserId());
@@ -60,10 +62,11 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setTel(orderRequest.getTel());
         orderEntity.setVehicule(vehicule);
         orderEntity.setTypeOrder(toi);
+        orderEntity.setCity(city);
         orderEntity.setPartenaire(partenaire);
         ordersRepo.save(orderEntity);
         HashMap<String,String> messageSucces = new HashMap<String,String>();
-        messageSucces.put("MESSAGE_SUCCES","VOUS AVEZ AJOUTER AVEC SUCES Un Order");
+        messageSucces.put("MESSAGE_SUCCES","VOUS AVEZ AJOUTER AVEC SUCES UN ORDER");
         messageSucces.put("httpStatus", HttpStatus.CREATED.toString());
         return messageSucces;
     }

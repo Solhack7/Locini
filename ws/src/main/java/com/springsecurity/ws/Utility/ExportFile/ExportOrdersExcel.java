@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 public class ExportOrdersExcel extends AbstractXlsView {
@@ -39,10 +40,13 @@ public class ExportOrdersExcel extends AbstractXlsView {
         row0.createCell(1).setCellValue("                   Vehicule                ");
         row0.createCell(2).setCellValue("                Nom De Client                  ");
         row0.createCell(3).setCellValue("   Date De Commande   ");
-        row0.createCell(4).setCellValue("   Téléphone   ");
-        row0.createCell(5).setCellValue("       Ville         ");
-        row0.createCell(6).setCellValue("    Prix Par Nuit    ");
-        row0.createCell(7).setCellValue("   Total  ");
+        row0.createCell(4).setCellValue("   Date From   ");
+        row0.createCell(5).setCellValue("   Date To   ");
+        row0.createCell(6).setCellValue("   Téléphone   ");
+        row0.createCell(7).setCellValue("       Ville         ");
+        row0.createCell(8).setCellValue("    Prix Par Nuit    ");
+        row0.createCell(9).setCellValue("    Nombre De Nuit    ");
+        row0.createCell(10).setCellValue("   Total  ");
 
         // FOR AUTO SIZE
         for (int j = 0; j < row0.getPhysicalNumberOfCells(); j++) {
@@ -57,10 +61,14 @@ public class ExportOrdersExcel extends AbstractXlsView {
             row.createCell(1).setCellValue(cmdi.getVehicule().getNomVehicule());
             row.createCell(2).setCellValue(cmdi.getFn() +" "+cmdi.getLn());
             row.createCell(3).setCellValue(formatter.format(cmdi.getDtOrder()));
-            row.createCell(4).setCellValue(cmdi.getTel());
-            row.createCell(5).setCellValue("Ville A Ajouter un service de ville a si walid");
-            row.createCell(6).setCellValue(cmdi.getVehicule().getPn());
-            row.createCell(7).setCellValue("KHASSEK T7SAB A RAS TBAL DAYS BETWEEN 2 DATES BACH HADIK HIYA QUANTITY");
+            row.createCell(4).setCellValue(formatter.format(cmdi.getDtfrom()));
+            row.createCell(5).setCellValue(formatter.format(cmdi.getDtto()));
+            row.createCell(6).setCellValue(cmdi.getTel());
+            row.createCell(7).setCellValue(cmdi.getCity().getCityName());
+            row.createCell(8).setCellValue(cmdi.getVehicule().getPn() +" MAD");
+            row.createCell(9).setCellValue(ChronoUnit.DAYS.between(cmdi.getDtfrom().toInstant(),cmdi.getDtto().toInstant()));
+            row.createCell(10).setCellValue((ChronoUnit.DAYS.between(cmdi.getDtfrom().toInstant(),cmdi.getDtto().toInstant())*(cmdi.getVehicule().getPn()))+" MAD ");
+
         };
     }
 }

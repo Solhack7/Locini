@@ -31,7 +31,7 @@ public class OrdersControllers {
 
     @PostMapping(path = "/add_order",consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<HashMap<String,String>> addOrder(@RequestBody OrderRequest orderRequest) throws OrderException, ParseException, VehiculeException, PartnaireException {
+    public ResponseEntity<HashMap<String,String>> addOrder(@RequestBody OrderRequest orderRequest) throws OrderException, ParseException, VehiculeException, PartnaireException, CityException {
         if (orderRequest.getIdbVehicule().isEmpty() || orderRequest.getIdbPartenaire().isEmpty() || orderRequest.getDtto().toString().isEmpty()
                 || orderRequest.getDtfrom().toString().isEmpty() || orderRequest.getFn().isEmpty() || orderRequest.getLn().isEmpty() || orderRequest.getTel().isEmpty())
             throw new OrderException("Vous Devez Remplir Les Champs Obligatoire");

@@ -58,6 +58,10 @@ public class OrdersEntity {
     @JoinColumn(name="partnaire_id")
     private PartenaireEntity partenaire;
 
+    @ManyToOne
+    @JoinColumn(name="city_id")
+    private CityEntity city;
+
 }
 /*
 

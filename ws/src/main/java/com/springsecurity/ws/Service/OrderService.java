@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface OrderService {
-    HashMap<String,String> addOrder(OrderRequest orderRequest) throws VehiculeException, ParseException, PartnaireException;
+    HashMap<String,String> addOrder(OrderRequest orderRequest) throws VehiculeException, ParseException, PartnaireException, CityException;
 
     List<OrdersResponse> getOrdersByTypeAndToken(Principal authentication, long typeo,int page,int limit) throws UsernameNotExist, TypeOrdersException;
 

@@ -24,4 +24,6 @@ public class OrdersResponse {
     private Date dtPc;
     private VehiculeResponse vehicule;
     private PartnaireResponse partenaire;
+    private CityResponse city;
+    private long numberDaysToLocate;
 }
