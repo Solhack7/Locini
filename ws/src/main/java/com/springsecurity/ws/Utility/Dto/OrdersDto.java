@@ -20,6 +20,7 @@ public class OrdersDto {
     private Date dtOrder;
     private Date dtPc;
     private String tel;
+    private long njl;
     private TypeOrderDto typeOrder;
     private VehiculeDto vehicule;
     private PartnaireDto partenaire;

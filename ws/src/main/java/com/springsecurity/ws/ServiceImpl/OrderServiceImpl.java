@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setLn(orderRequest.getLn());
         orderEntity.setDtfrom(orderRequest.getDtfrom());
         orderEntity.setDtto(orderRequest.getDtto());
+        orderEntity.setNjl(ChronoUnit.DAYS.between(orderRequest.getDtfrom().toInstant(),orderRequest.getDtto().toInstant()));
         orderEntity.setTel(orderRequest.getTel());
         orderEntity.setVehicule(vehicule);
         orderEntity.setTypeOrder(toi);

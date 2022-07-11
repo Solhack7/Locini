@@ -66,9 +66,8 @@ public class ExportOrdersExcel extends AbstractXlsView {
             row.createCell(6).setCellValue(cmdi.getTel());
             row.createCell(7).setCellValue(cmdi.getCity().getCityName());
             row.createCell(8).setCellValue(cmdi.getVehicule().getPn() +" MAD");
-            row.createCell(9).setCellValue(ChronoUnit.DAYS.between(cmdi.getDtfrom().toInstant(),cmdi.getDtto().toInstant()));
-            row.createCell(10).setCellValue((ChronoUnit.DAYS.between(cmdi.getDtfrom().toInstant(),cmdi.getDtto().toInstant())*(cmdi.getVehicule().getPn()))+" MAD ");
-
+            row.createCell(9).setCellValue(cmdi.getNjl());
+            row.createCell(10).setCellValue((cmdi.getNjl())*(cmdi.getVehicule().getPn())+" MAD ");
         };
     }
 }
