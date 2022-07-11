@@ -147,4 +147,108 @@ public class OrderServiceImpl implements OrderService {
         return orderResponses;
 
     }
+
+    @Override
+    public List<OrdersResponse> filtringOrders(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_brand1, Date dt_order, long typeo) {
+        return null;
+    }
+
+    @Override
+    public List<OrdersResponse> filtringOrdersMultipleChoice(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_city, Date dt_from, Date dt_to, String typeo) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException {
+        ModelMapper modelMapper = new ModelMapper();
+        UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
+        if(page>0){
+            page-=page;
+        }
+        if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
+        PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
+        Pageable pagaebaleRequest = PageRequest.of(page, limit,Sort.by("dtOrder").descending());
+        List<OrdersEntity> ordersEntities = new ArrayList<>();
+        if(idb_city== null && idb_vehicule==null && typeo!=null)
+        {
+            TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(typeo);
+            if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndTypeOrderAndDtOrderBetween(getPartenaire,to,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        else if(idb_vehicule==null &&typeo==null && idb_city!=null){
+            CityEntity city = cityRepo.findByIdbCity(idb_city);
+            if (city==null) throw  new CityException("Cette Ville Exixt Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndCityAndDtOrderBetween(getPartenaire,city,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        else if (idb_city==null&&typeo==null&&idb_vehicule!=null){
+            VehiculeEntity vehicule = vehiculeRepo.findByBrowserId(idb_vehicule);
+            if(vehicule==null) throw  new VehiculeException("Cette Vehicule Exixt Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndVehiculeAndDtOrderBetween(getPartenaire,vehicule,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        else if(idb_city==null&& idb_vehicule==null &&typeo==null){
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndDtOrderBetween(getPartenaire,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+
+        // Type Order Combinasion
+        // ||||||||||
+        // Type Order And City
+        else if(idb_vehicule==null)
+        {
+            TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(typeo);
+            if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+            CityEntity city = cityRepo.findByIdbCity(idb_city);
+            if (city==null) throw  new CityException("Cette Ville Exixt Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndTypeOrderAndCityAndDtOrderBetween(getPartenaire,to,city,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        // Type Order And Vehicule
+        else if(idb_city==null)
+        {
+            TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(typeo);
+            if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+            VehiculeEntity vehicule = vehiculeRepo.findByBrowserId(idb_vehicule);
+            if(vehicule==null) throw  new VehiculeException("Cette Vehicule Exixt Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndTypeOrderAndVehiculeAndDtOrderBetween(getPartenaire,to,vehicule,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        // Type Order And Dt_From And Dt_To
+        else if (idb_city==null && idb_vehicule==null){
+            TypeOrderEntity to= typeOrderRepo.findByIdbTypeo(typeo);
+            if (to==null) throw  new TypeOrdersException("Ce Type Exxit Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndTypeOrderAndDtOrderBetween(getPartenaire,to,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+
+        // achnu 3ndi mujud 3ndi city u type
+        // City Combination
+        else if(typeo==null)
+        {
+            CityEntity city = cityRepo.findByIdbCity(idb_city);
+            if (city==null) throw  new CityException("Cette Ville Exixt Pas");
+            VehiculeEntity vehicule = vehiculeRepo.findByBrowserId(idb_vehicule);
+            if(vehicule==null) throw  new VehiculeException("Cette Vehicule Exixt Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndCityAndVehiculeAndDtOrderBetween(getPartenaire,city,vehicule,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        else {
+            TypeOrderEntity typeOrder = typeOrderRepo.findByIdbTypeo(typeo);
+            if(typeOrder==null) throw new TypeOrdersException("Ce Type De Orders Exixt Pas");
+            CityEntity city = cityRepo.findByIdbCity(idb_city);
+            if (city==null) throw  new CityException("Cette Ville Exixt Pas");
+            VehiculeEntity vehicule = vehiculeRepo.findByBrowserId(idb_vehicule);
+            if(vehicule==null) throw  new VehiculeException("Cette Vehicule Exixt Pas");
+            Page<OrdersEntity> ordersEntityPage = ordersRepo.findByPartenaireAndTypeOrderAndCityAndVehiculeAndDtOrderBetween(getPartenaire,typeOrder,city,vehicule,dt_from,dt_to,pagaebaleRequest);
+            ordersEntities = ordersEntityPage.getContent();
+        }
+        List<OrdersDto> ordersDtos = new ArrayList<>();
+        for (OrdersEntity order:ordersEntities) {
+            OrdersDto ordersDto = modelMapper.map(order,OrdersDto.class);
+            ordersDtos.add(ordersDto);
+        }
+        List<OrdersResponse> orderResponses = new ArrayList<>();
+        for (OrdersDto order:ordersDtos) {
+            OrdersResponse ordersResponse = modelMapper.map(order,OrdersResponse.class);
+            orderResponses.add(ordersResponse);
+        }
+        return orderResponses;
+    }
 }

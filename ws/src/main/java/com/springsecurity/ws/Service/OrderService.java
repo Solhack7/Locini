@@ -19,4 +19,8 @@ public interface OrderService {
     OrdersDto updateOrders(String order_idb, String typeo) throws OrderException, TypeOrdersException, ParseException;
 
     List<OrdersResponse> getOrdersByTypeAndTokenAndDate(String type_order, Principal principal, String dt,String dtFrom,String dtTo) throws UsernameNotExist, TypeOrdersException, ParseException;
+
+    List<OrdersResponse> filtringOrders(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_brand1, Date dt_order, long typeo);
+
+    List<OrdersResponse> filtringOrdersMultipleChoice(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_city, Date dt_from, Date dt_to, String typeo) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException;
 }
