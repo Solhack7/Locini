@@ -1,18 +1,22 @@
 package com.springsecurity.ws.Controller;
 
 
-import com.springsecurity.ws.Exception.InvoiceException;
-import com.springsecurity.ws.Exception.TypeOrdersException;
-import com.springsecurity.ws.Exception.UsernameNotExist;
+import com.springsecurity.ws.Exception.*;
+import com.springsecurity.ws.Response.CategoryResponse;
 import com.springsecurity.ws.Response.OrdersResponse;
 import com.springsecurity.ws.Service.OrderService;
+import com.springsecurity.ws.UserRequest.CategoryRequest;
+import com.springsecurity.ws.Utility.Dto.CategoryDto;
 import com.springsecurity.ws.Utility.ExportFile.ExportOrdersExcel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -36,4 +40,10 @@ public class InvoiceControllers {
             mav.addObject("orders", orders);
             return mav;
         }
+
+    @GetMapping(path = "/get_orders_to_invoice/{idborder}")
+    public ResponseEntity<HashMap<String,Object>> getDataToInvoice(@PathVariable String idborder,Principal authentication) throws CategoryException, OrderException {
+        HashMap<String,Object> hashMap = orderService.getData(idborder,authentication);
+        return new ResponseEntity<HashMap<String,Object>>(hashMap, HttpStatus.OK);
+    }
     }

@@ -7,6 +7,7 @@ import com.springsecurity.ws.Response.OrdersResponse;
 import com.springsecurity.ws.Service.OrderService;
 import com.springsecurity.ws.UserRequest.OrderRequest;
 import com.springsecurity.ws.Utility.Dto.OrdersDto;
+import com.springsecurity.ws.Utility.Dto.PartnaireDto;
 import com.springsecurity.ws.Utility.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -250,5 +251,18 @@ public class OrderServiceImpl implements OrderService {
             orderResponses.add(ordersResponse);
         }
         return orderResponses;
+    }
+
+    @Override
+    public HashMap<String, Object> getData(String idborder,Principal authentication) throws OrderException {
+        ModelMapper modelMapper = new ModelMapper();
+        HashMap<String,Object> hashMap = new HashMap<>();
+        UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
+        PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
+        hashMap.put("partner",modelMapper.map(getPartenaire, PartnaireDto.class));
+        OrdersEntity ordersEntity = ordersRepo.findByIdbOrderAndPartenaire(idborder,getPartenaire);
+        if(ordersEntity==null) throw  new OrderException("ce orders exixts pas ");
+        hashMap.put("order",modelMapper.map(ordersEntity, OrdersDto.class));
+        return hashMap;
     }
 }

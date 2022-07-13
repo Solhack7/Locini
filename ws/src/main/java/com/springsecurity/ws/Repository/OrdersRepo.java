@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface OrdersRepo extends PagingAndSortingRepository<OrdersEntity,Long> {
+    OrdersEntity findByIdbOrderAndPartenaire(String idb,PartenaireEntity partenaire);
     Page<OrdersEntity> findByPartenaireAndTypeOrder(PartenaireEntity partenaire, TypeOrderEntity typeo, Pageable pagaebaleRequest);
     OrdersEntity findByIdbOrder(String idb);
     List<OrdersEntity> findByPartenaireAndTypeOrderAndDtOrderGreaterThan(PartenaireEntity getPartenaire, TypeOrderEntity to, Date dt);
