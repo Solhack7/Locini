@@ -16,7 +16,9 @@ public interface OrdersRepo extends PagingAndSortingRepository<OrdersEntity,Long
     OrdersEntity findByIdbOrder(String idb);
     List<OrdersEntity> findByPartenaireAndTypeOrderAndDtOrderGreaterThan(PartenaireEntity getPartenaire, TypeOrderEntity to, Date dt);
     Page<OrdersEntity> findByPartenaireAndCity(PartenaireEntity partenaire, CityEntity cityEntity,Pageable pagaebaleRequest);
+
     Page<OrdersEntity> findByPartenaireAndDtOrderBetween(PartenaireEntity partenaire,Date dtFrom,Date dtTo,Pageable pagaebaleRequest);
+
     Page<OrdersEntity> findByPartenaireAndVehicule(PartenaireEntity partenaire, VehiculeEntity vehicule,Pageable pagaebaleRequest);
     List<OrdersEntity> findByPartenaireAndTypeOrderAndDtOrderBetween(PartenaireEntity getPartenaire, TypeOrderEntity to, Date dtFrom,Date dtTo);
     Page<OrdersEntity> findByPartenaireAndTypeOrderAndDtOrderBetween(PartenaireEntity getPartenaire, TypeOrderEntity to, Date dtFrom,Date dtTo,Pageable pageable);

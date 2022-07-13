@@ -4,6 +4,7 @@ import com.springsecurity.ws.Exception.*;
 import com.springsecurity.ws.Response.OrdersResponse;
 import com.springsecurity.ws.UserRequest.OrderRequest;
 import com.springsecurity.ws.Utility.Dto.OrdersDto;
+import org.springframework.data.domain.Pageable;
 
 import java.security.Principal;
 import java.text.ParseException;
@@ -22,7 +23,7 @@ public interface OrderService {
 
     List<OrdersResponse> filtringOrders(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_brand1, Date dt_order, long typeo);
 
-    List<OrdersResponse> filtringOrdersMultipleChoice(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_city, Date dt_from, Date dt_to, String typeo) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException;
+    List<OrdersResponse> filtringOrdersMultipleChoice(Principal authentication, Pageable pageable, String idb_vehicule, String idb_brand, String idb_city, Date dt_from, Date dt_to, String typeo) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException;
 
     HashMap<String, Object> getData(String idborder,Principal authentication) throws OrderException;
 }

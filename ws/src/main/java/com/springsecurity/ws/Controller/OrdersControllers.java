@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +63,11 @@ public class OrdersControllers {
     @GetMapping(path = "/filtring_orders", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<OrdersResponse>> filtringOrders(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "90") int limit, @RequestParam(value = "typeo",required = false) String typeo, @RequestParam(value = "dt_from",required = false) String dt_from,@RequestParam(value = "dt_to",required = false ) String dt_to,@RequestParam(value = "idb_brand",required = false) String idb_brand,@RequestParam(value = "idb_city",required = false) String idb_city, @RequestParam(value = "idb_vehicule",required = false) String idb_vehicule, Principal authentication) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException, OrderException, ParseException {
         if(dt_from==null && dt_to==null) throw new OrderException("Bad Request You Should Add Params");
-        List<OrdersResponse> payload = orderService.filtringOrdersMultipleChoice(authentication,page,limit,idb_vehicule,idb_brand,idb_city,utils.convertStringToDate(dt_from),utils.convertStringToDate(dt_to),typeo);
+        if(page>0){
+            page-=page;
+        }
+        Pageable pagaebaleRequest = PageRequest.of(page, 1, Sort.by("dtOrder").descending());
+        List<OrdersResponse> payload = orderService.filtringOrdersMultipleChoice(authentication,pagaebaleRequest,idb_vehicule,idb_brand,idb_city,utils.convertStringToDate(dt_from),utils.convertStringToDate(dt_to),typeo);
         return new ResponseEntity<List<OrdersResponse>>(payload, HttpStatus.OK);
     }
 }

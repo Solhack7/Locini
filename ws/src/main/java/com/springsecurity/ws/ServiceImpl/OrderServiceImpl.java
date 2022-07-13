@@ -155,15 +155,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrdersResponse> filtringOrdersMultipleChoice(Principal authentication, int page, int limit, String idb_vehicule, String idb_brand, String idb_city, Date dt_from, Date dt_to, String typeo) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException {
+    public List<OrdersResponse> filtringOrdersMultipleChoice(Principal authentication, Pageable pagaebaleRequest, String idb_vehicule, String idb_brand, String idb_city, Date dt_from, Date dt_to, String typeo) throws UsernameNotExist, TypeOrdersException, CityException, VehiculeException {
         ModelMapper modelMapper = new ModelMapper();
         UsersAccount account = usersAccountRepository.findByUsername(authentication.getName());
-        if(page>0){
-            page-=page;
-        }
+
         if (account==null) throw  new UsernameNotExist("Ce Utilisateur Exixt Pas");
         PartenaireEntity getPartenaire = partenaireRepo.findByUsersAccount(account);
-        Pageable pagaebaleRequest = PageRequest.of(page, limit,Sort.by("dtOrder").descending());
         List<OrdersEntity> ordersEntities = new ArrayList<>();
         if(idb_city== null && idb_vehicule==null && typeo!=null)
         {
